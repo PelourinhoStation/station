@@ -182,14 +182,23 @@ public class Comboio extends Thread {
 
                 System.out.println("Comboio " + getNumero() + " a chegar à estação " + currentStation.getNumero() + "-" + currentStation.getNome() + "...");
 
-                // Verifica se a estação atual está sobrelotada
+                // Verifica se a estação atual está sobrelotada de passageiros
                 if (currentStation.isOvercrowded()) {
-                    System.out.println("Conflito na estação " + currentStation.getNumero() + ": estação sobrelotada");
+                    System.out.println("Conflito na estação " + currentStation.getNumero() + ": estação sobrelotada de passageiros");
                 }
+
+                 // Verifica se a estação atual está sobrelotada de comboios
+                if (currentStation.isFull()) {
+                    System.out.println("Conflito na estação " + currentStation.getNumero() + ": estação sobrelotada de comboios");
+                }
+              
+                //adicionar comboio a estação
+                currentStation.addTrain();
+
                 // Abre as portas do comboio a cada 5 segundos
                 try {
-                    this.openDoors();
-
+                    this.openDoors();   
+                       
                     //verifica se há passageiros no comboio que querem sair na estação atual
                     for (Passageiro passageiro : passageiros) {
                         if (passageiro.getBilhete().getEstacaoSaida().getNumero() == currentStation.getNumero() && passageiro.getBilhete().getLinha().getNumero() == line.getNumero() && passageiro.isEstaNoComboio()) {
@@ -251,6 +260,11 @@ public class Comboio extends Thread {
                 if (nextStation != null && nextStation.isOvercrowded()) {
                     System.out.println("Conflito na estação " + nextStation.getNumero() + ": estação sobrelotada");
                 }
+                
+                //remove comboio da estação
+                currentStation.removeTrain();
+                System.out.println("Comboio " + getNumero() + " a sair da estação " + currentStation.getNumero() + "-" + currentStation.getNome() + "...");
+
 
                 // Atualiza a estação atual
                 currentStation = nextStation;
