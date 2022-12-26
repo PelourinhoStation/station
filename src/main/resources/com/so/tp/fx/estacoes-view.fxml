@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="485.0" prefWidth="871.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.EstacoesController">
+   <children>
+      <Label layoutX="272.0" layoutY="19.0" text="GERIR ESTAÇÕES" AnchorPane.leftAnchor="272.0" AnchorPane.rightAnchor="364.6" AnchorPane.topAnchor="19.0">
+         <font>
+            <Font size="31.0" />
+         </font>
+      </Label>
+      <TableView fx:id="tblEstacao" layoutX="623.0" layoutY="19.0" onMouseClicked="#onRowSelect" prefHeight="448.0" prefWidth="234.0" AnchorPane.bottomAnchor="18.0" AnchorPane.leftAnchor="623.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="19.0" />
+      <TextField fx:id="txtNumero" layoutX="101.0" layoutY="108.0" />
+      <TextField fx:id="txtNome" layoutX="101.0" layoutY="142.0" />
+      <TextField fx:id="txtLotacao" layoutX="101.0" layoutY="176.0" />
+      <Label layoutX="35.0" layoutY="111.0" text="Número">
+         <font>
+            <Font name="Gill Sans MT" size="16.0" />
+         </font>
+      </Label>
+      <Label layoutX="47.0" layoutY="145.0" text="Nome">
+         <font>
+            <Font name="Gill Sans MT" size="16.0" />
+         </font>
+      </Label>
+      <Label layoutX="42.0" layoutY="179.0" text="Lotação">
+         <font>
+            <Font name="Gill Sans MT" size="16.0" />
+         </font>
+      </Label>
+      <Button fx:id="btnSave" layoutX="63.0" layoutY="243.0" mnemonicParsing="false" onAction="#onSaveClick" text="Gravar" />
+      <Label fx:id="lblAlerta" layoutX="151.0" layoutY="211.0" />
+      <Button fx:id="btnAtualizar" layoutX="128.0" layoutY="243.0" mnemonicParsing="false" onAction="#onUpdateClick" text="Atualizar" />
+      <Button fx:id="btnEliminar" layoutX="209.0" layoutY="243.0" mnemonicParsing="false" onAction="#onDeleteClick" text="Eliminar" />
+   </children>
+</AnchorPane>
