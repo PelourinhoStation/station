@@ -7,11 +7,15 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.sql.*;
+
 
 public class Main extends Application {
+
+    private static final String DB_URL = "jdbc:mysql://<localhost>:<port>/<station>";
+    private static final String DB_USER = "<root>";
+    private static final String DB_PASSWORD = "<>";
+
     public static List<Passageiro> passageiros = new ArrayList<>();
 //    public static List<Passageiro> passageirosComboio1 = new LinkedList<>();
 //    public static List<Passageiro> passageirosComboio2 = new LinkedList<>();
@@ -25,7 +29,7 @@ public class Main extends Application {
         stage.show();
     }
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, ClassNotFoundException {
         //Estacao estacao = new Estacao(7, 100, "Estação de Lisboa");
         //PainelControlo.guardarEstacoes(estacao);
         //PainelControlo.criaEstacoes();
@@ -34,7 +38,8 @@ public class Main extends Application {
         geradorDeDados();
     }
 
-    public static void geradorDeDados(){
+    public static void geradorDeDados() throws ClassNotFoundException {
+
         // Cria algumas estações
         Estacao estacao1 = new Estacao(1, "Marco Canaveses", 100);
         Estacao estacao2 = new Estacao(2, "Livração", 200);
@@ -93,34 +98,27 @@ public class Main extends Application {
         estacoesLinhaPorto3.add(estacao18);
 
         // Cria algumas linhas
-        Linha linhaPorto1 = new Linha(1, "Ida", estacoesLinhaPorto1);
-        Linha linhaPorto1Volta = new Linha(2, "Volta", estacoesLinhaPorto1);
-
-        Linha linhaPorto2 = new Linha(3, "Ida", estacoesLinhaPorto2);
-        Linha linhaPorto2Volta = new Linha(4, "Volta", estacoesLinhaPorto2);
-
-        Linha linhaPorto3 = new Linha(5, "Ida", estacoesLinhaPorto3);
+        Linha linhaPorto1 = new Linha(1, estacoesLinhaPorto1);
+        Linha linhaPorto2 = new Linha(3, estacoesLinhaPorto2);
+        Linha linhaPorto3 = new Linha(5, estacoesLinhaPorto3);
 
         // Guarda as linhas num map
         Map<Integer, Linha> linhas = new HashMap<>();
         linhas.put(linhaPorto1.getNumero(), linhaPorto1);
-        linhas.put(linhaPorto1Volta.getNumero(), linhaPorto1Volta);
         linhas.put(linhaPorto2.getNumero(), linhaPorto2);
-        linhas.put(linhaPorto2Volta.getNumero(), linhaPorto2Volta);
         linhas.put(linhaPorto3.getNumero(), linhaPorto3);
 
         // Cria alguns horários
-        Horario horario1 = new Horario("8:00", "9:00", linhaPorto1);
-        Horario horario2 = new Horario("9:00", "10:00", linhaPorto1Volta);
-        Horario horario3 = new Horario("10:00", "11:00", linhaPorto1);
+        Horario horario1 = new Horario("8:00", "9:00", linhaPorto1, "Ida");
+        Horario horario2 = new Horario("9:00", "10:00", linhaPorto1, "Volta");
+        Horario horario3 = new Horario("10:00", "11:00", linhaPorto1, "Ida");
 
-        Horario horario4 = new Horario("8:00", "9:00", linhaPorto2);
-        Horario horario5 = new Horario("9:00", "10:00", linhaPorto2Volta);
-        Horario horario6 = new Horario("10:00", "11:00", linhaPorto2);
+        Horario horario4 = new Horario("8:00", "9:00", linhaPorto2, "Ida");
+        Horario horario6 = new Horario("10:00", "11:00", linhaPorto2, "Volta");
 
-        Horario horario7 = new Horario("8:00", "9:00", linhaPorto3);
-        Horario horario8 = new Horario("9:00", "10:00", linhaPorto3);
-        Horario horario9 = new Horario("10:00", "11:00", linhaPorto3);
+        Horario horario7 = new Horario("8:00", "9:00", linhaPorto3, "Ida");
+        Horario horario8 = new Horario("9:00", "10:00", linhaPorto3, "Ida");
+        Horario horario9 = new Horario("10:00", "11:00", linhaPorto3, "Volta");
 
         // Coloca-os numa lista ligada
         List<Horario> horariosLinhaPorto1 = new LinkedList<>();
@@ -128,16 +126,10 @@ public class Main extends Application {
         //horariosLinhaPorto1.add(horario2);
         //horariosLinhaPorto1.add(horario3);
 
-        List<Horario> horariosLinhaPorto1Volta = new LinkedList<>();
-        horariosLinhaPorto1Volta.add(horario2);
-
         List<Horario> horariosLinhaPorto2 = new LinkedList<>();
-        horariosLinhaPorto2.add(horario4);
+        horariosLinhaPorto2.add(horario2);
         //horariosLinhaPorto2.add(horario5);
         //horariosLinhaPorto2.add(horario6);
-
-        List<Horario> horariosLinhaPorto2Volta = new LinkedList<>();
-        horariosLinhaPorto2Volta.add(horario5);
 
         List<Horario> horariosLinhaPorto3 = new LinkedList<>();
         horariosLinhaPorto3.add(horario7);
@@ -145,22 +137,23 @@ public class Main extends Application {
         //horariosLinhaPorto3.add(horario9);
 
         // Bilhetes linha1
-        Bilhete bilhete1 = new Bilhete(1, estacao1, estacao4, linhaPorto1);
-        Bilhete bilhete2 = new Bilhete(2, estacao1, estacao5, linhaPorto1);
-        Bilhete bilhete3 = new Bilhete(3, estacao3, estacao6, linhaPorto1);
-        Bilhete bilhete4 = new Bilhete(4, estacao4, estacao6, linhaPorto1);
-        //Bilhetes linha2
-        Bilhete bilhete5 = new Bilhete(5, estacao6, estacao1, linhaPorto1Volta);
-        Bilhete bilhete6 = new Bilhete(6, estacao5, estacao2, linhaPorto1Volta);
-        Bilhete bilhete7 = new Bilhete(7, estacao3, estacao1, linhaPorto1Volta);
-        Bilhete bilhete8 = new Bilhete(8, estacao7, estacao12, linhaPorto2);
+        Bilhete bilhete1 = new Bilhete(1, estacao1, estacao4, linhaPorto1, "Ida");
+        Bilhete bilhete2 = new Bilhete(2, estacao1, estacao5, linhaPorto1, "Ida");
+        Bilhete bilhete3 = new Bilhete(3, estacao3, estacao6, linhaPorto1, "Ida");
+        Bilhete bilhete4 = new Bilhete(4, estacao4, estacao6, linhaPorto1, "Ida");
+
+        //Bilhetes linha1 - volta
+        Bilhete bilhete5 = new Bilhete(5, estacao6, estacao1, linhaPorto1, "Volta");
+        Bilhete bilhete6 = new Bilhete(6, estacao5, estacao2, linhaPorto1, "Volta");
+        Bilhete bilhete7 = new Bilhete(7, estacao3, estacao1, linhaPorto1, "Volta");
+        Bilhete bilhete8 = new Bilhete(8, estacao7, estacao12, linhaPorto1, "Volta");
 
         //Passageiros linha1
         Passageiro passageiro1 = new Passageiro(1, "João", bilhete1, estacao1);
         Passageiro passageiro2 = new Passageiro(2, "Maria", bilhete2, estacao1);
-        Passageiro passageiro3 = new Passageiro(3, "Pedro", bilhete3, estacao1);
+        Passageiro passageiro3 = new Passageiro(3, "Pedro", bilhete3, estacao3);
         Passageiro passageiro4 = new Passageiro(4, "Ana", bilhete4, estacao3);
-        Passageiro passageiro5 = new Passageiro(5, "Rosa", bilhete1, estacao1);
+        Passageiro passageiro5 = new Passageiro(5, "Rosa", bilhete5, estacao1);
 
         passageiros.add(passageiro1);
         passageiros.add(passageiro2);
@@ -168,8 +161,8 @@ public class Main extends Application {
         passageiros.add(passageiro4);
         passageiros.add(passageiro5);
 
-        //Passageiros linha2
-        Passageiro passageiro6 = new Passageiro(6, "Gonçalo", bilhete5, estacao6);
+        //Passageiros linha1 - volta
+        Passageiro passageiro6 = new Passageiro(6, "Gonçalo", bilhete1, estacao6);
         Passageiro passageiro7 = new Passageiro(7, "Célia", bilhete6, estacao5);
         Passageiro passageiro8 = new Passageiro(8, "Carlos", bilhete7, estacao3);
         Passageiro passageiro9 = new Passageiro(9, "Catarina", bilhete8, estacao7);
@@ -184,15 +177,10 @@ public class Main extends Application {
         List<Comboio> comboios = new LinkedList<>();
 
         Comboio comboio1 = new Comboio(1, 100, horariosLinhaPorto1, passageiros);
-        Comboio comboio2 = new Comboio(2, 100, horariosLinhaPorto1Volta, passageiros);
-
         Comboio comboio3 = new Comboio(3, 100, horariosLinhaPorto2, passageiros);
-        Comboio comboio4 = new Comboio(4, 100, horariosLinhaPorto2Volta, passageiros);
 
         comboios.add(comboio1);
-        comboios.add(comboio2);
         comboios.add(comboio3);
-        comboios.add(comboio4);
 
         iniciaComboios(comboios);
 
@@ -215,7 +203,7 @@ public class Main extends Application {
         }
     }
 
-    public static void iniciaComboios(List<Comboio> comboios){
+    public static void iniciaComboios(List<Comboio> comboios) {
 
         //instancia do objeto random para gerar um valor aleatório
         Random random = new Random();
@@ -242,7 +230,7 @@ public class Main extends Application {
                 outroComboio.setHorarioAtual(outroComboio.getHorarios().get(0));
                 //Verifica se as estações que os comboios vão percorrer são iguauis e se o sentido é contrário
                 if (comboio.getHorarioAtual().getLinha().getEstacoes().equals(outroComboio.getHorarioAtual().getLinha().getEstacoes()) &&
-                        !comboio.getHorarioAtual().getLinha().getSentido().equals(outroComboio.getHorarioAtual().getLinha().getSentido()) && comboio.getNumero() != outroComboio.getNumero()) {
+                        !comboio.getHorarioAtual().getSentido().equals(outroComboio.getHorarioAtual().getSentido()) && comboio.getNumero() != outroComboio.getNumero()) {
 
                     aux = outroComboio; //guarda na variavel aux o comboio que esta em sentido contrário
                     comboiosEmSentidoContrario.add(new Comboio[]{comboio, outroComboio});
@@ -250,7 +238,7 @@ public class Main extends Application {
                 }
             }
             if (!encontrouComboioContrario) {
-                if (aux != comboio){ //verifica se está a entrar neste metodo um comboio que já foi dado como estando em sentido contrário
+                if (aux != comboio) { //verifica se está a entrar neste metodo um comboio que já foi dado como estando em sentido contrário
                     comboiosParaPartir.add(comboio); //se não estiver adiciona-o a lista de comboios para partir
                 }
             }

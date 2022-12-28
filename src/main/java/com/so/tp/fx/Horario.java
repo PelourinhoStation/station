@@ -7,10 +7,11 @@ public class Horario {
     Linha linha;
     String sentido;
 
-    public Horario(String horaPartida, String horaChegada, Linha linha) {
+    public Horario(String horaPartida, String horaChegada, Linha linha, String sentido) {
         this.horaChegada = horaChegada;
         this.horaPartida = horaPartida;
         this.linha = linha;
+        this.sentido = sentido;
     }
 
     public String getHoraChegada() {
@@ -45,4 +46,11 @@ public class Horario {
         this.linha = linha;
     }
 
+    public String getSentido() {
+        return sentido;
+    }
+
+    public void setSentido(String sentido) {
+        this.sentido = sentido;
+    }
 }

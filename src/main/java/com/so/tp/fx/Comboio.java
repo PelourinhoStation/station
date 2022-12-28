@@ -131,15 +131,13 @@ public class Comboio extends Thread {
         System.out.println("Comboio " + getNumero() + " fechou as portas na estação " + getEstacaoAtual().getNome());
     }
 
-    public void embarcarPassageiro(Passageiro passageiro) throws InterruptedException {
+    public void embarcarPassageiro(Passageiro passageiro, Comboio comboio) throws InterruptedException {
         // chama a função isValid da classe bilhete para verificar se o passageiro possui um bilhete válido entre as estações (exemplo: um passageiro não pode entrar num comboio que vai de Lisboa - Porto com um bilhete que vai de Porto - Lisboa)
-        if (!passageiro.getBilhete().isValido(passageiro)) {
-            passageiro.setComboio(null); //se o bilhete for inválido, o passageiro é removido do comboio
+        if (!passageiro.getBilhete().isValido(passageiro, comboio)) {
             passageiro.setTentouEntrar(true); //é registado que o passageiro tentou entrar no comboio
-            // sout do conflito
-            System.out.println("Conflito no comboio " + getNumero() + ": passageiro " + passageiro.getNome() + " tentou entrar sem bilhete válido");
         } else if (!passageiro.isEstaNoComboio() && !passageiro.isSaiuDoComboio()) { //senão se o passageiro não estiver no comboio e não tiver saído do comboio antes
             if (!this.isOvercrowded()) {
+                passageiro.setComboio(this); //registar o comboio em que o passageiro está
                 this.addPassenger(passageiro); //adiciona o passageiro ao comboio
                 passageiro.setEstaNoComboio(true); //registamos que o passageiro está no comboio
                 // sout do embarque
@@ -169,7 +167,7 @@ public class Comboio extends Thread {
             Linha line = horario.getLinha(); //get da linha do horário atual
             Estacao currentStation;
 
-            if (line.getSentido() == "Ida") { //se o sentido da linha for "Ida"
+            if (horario.getSentido() == "Ida") { //se o sentido da linha for "Ida"
                 currentStation = line.getEstacoes().get(0); //get da primeira estação da linha
             } else { // se o sentido da linha for "Volta"
                 currentStation = line.getEstacoes().get(line.getEstacoes().size() - 1); // get da última estação da linha
@@ -191,14 +189,14 @@ public class Comboio extends Thread {
                 if (currentStation.isFull()) {
                     System.out.println("Conflito na estação " + currentStation.getNumero() + ": estação sobrelotada de comboios");
                 }
-              
+
                 //adicionar comboio a estação
                 currentStation.addTrain();
 
                 // Abre as portas do comboio a cada 5 segundos
                 try {
-                    this.openDoors();   
-                       
+                    this.openDoors();
+
                     //verifica se há passageiros no comboio que querem sair na estação atual
                     for (Passageiro passageiro : passageiros) {
                         if (passageiro.getBilhete().getEstacaoSaida().getNumero() == currentStation.getNumero() && passageiro.getBilhete().getLinha().getNumero() == line.getNumero() && passageiro.isEstaNoComboio()) {
@@ -206,26 +204,20 @@ public class Comboio extends Thread {
                         }
                     }
 
-                    //verifica se há passageiros na estação que querem entrar no comboio
                     for (Passageiro passageiro : passageiros) {
-                        if (passageiro.getBilhete().getEstacaoEntra().getNumero() == currentStation.getNumero() && passageiro.getBilhete().getLinha().getNumero() == line.getNumero() && !passageiro.isTentouEntrar()) {
-                            this.embarcarPassageiro(passageiro);
+                        if (passageiro.getEstacaoEntrada().getNumero() == currentStation.getNumero() && passageiro.getComboio()==null && passageiro.getBilhete().getLinha() == this.getHorarioAtual().getLinha() && !passageiro.isTentouEntrar() && !passageiro.isEstaNoComboio() && !passageiro.isSaiuDoComboio()) {
+                            this.embarcarPassageiro(passageiro, this);
                         }
-                    }
-
-                    for (Passageiro passageiro : passageiros) {
-                        // atribui o comboio ao passageiro
-                        passageiro.setComboio(this);
-                        if (passageiro.getBilhete().getEstacaoEntra().getNumero() == currentStation.getNumero() && passageiro.getBilhete().getLinha().getNumero() == line.getNumero() && !passageiro.isTentouEntrar()) {
-                            this.embarcarPassageiro(passageiro);
-                        } else {
-                            if (passageiro.getBilhete().getLinha().getNumero() == line.getNumero() && passageiro.getEstacaoEntrada().getNumero() == currentStation.getNumero() && !passageiro.isTentouEntrar()) {
-                                passageiro.setComboio(null); //se o bilhete for inválido, o passageiro é removido do comboio
-                                passageiro.setTentouEntrar(true); //é registado que o passageiro tentou entrar no comboio
-                                // sout do conflito
-                                System.out.println("Conflito no comboio " + getNumero() + ": passageiro " + passageiro.getNome() + " tentou embarcar na estação errada, devia entrar em: " + passageiro.getBilhete().getEstacaoEntra().getNome());
-                            }
-                        }
+//                        if (passageiro.getBilhete().getEstacaoEntra().getNumero() == currentStation.getNumero() && passageiro.getBilhete().getLinha().getNumero() == line.getNumero() && !passageiro.isTentouEntrar()) {
+//                            this.embarcarPassageiro(passageiro, this);
+//                        } else {
+//                            if (passageiro.getBilhete().getLinha().getNumero() == line.getNumero() && passageiro.getEstacaoEntrada().getNumero() == currentStation.getNumero() && !passageiro.isTentouEntrar()) {
+//                                passageiro.setComboio(null); //se o bilhete for inválido, o passageiro é removido do comboio
+//                                passageiro.setTentouEntrar(true); //é registado que o passageiro tentou entrar no comboio
+//                                // sout do conflito
+//                                System.out.println("Conflito no comboio " + getNumero() + ": passageiro " + passageiro.getNome() + " tentou embarcar na estação errada, devia entrar em: " + passageiro.getBilhete().getEstacaoEntra().getNome());
+//                            }
+//                        }
                     }
                     Thread.sleep(5000);
                 } catch (InterruptedException e) {
@@ -251,7 +243,7 @@ public class Comboio extends Thread {
                 Estacao nextStation;
 
                 // Verifica se a próxima estação está sobrelotada
-                if (line.getSentido() == "Ida") {
+                if (horario.getSentido() == "Ida") {
                     nextStation = line.getEstacaoSeguinte(currentStation);
                 } else {
                     nextStation = line.getEstacaoAnterior(currentStation);
@@ -260,7 +252,7 @@ public class Comboio extends Thread {
                 if (nextStation != null && nextStation.isOvercrowded()) {
                     System.out.println("Conflito na estação " + nextStation.getNumero() + ": estação sobrelotada");
                 }
-                
+
                 //remove comboio da estação
                 currentStation.removeTrain();
                 System.out.println("Comboio " + getNumero() + " a sair da estação " + currentStation.getNumero() + "-" + currentStation.getNome() + "...");

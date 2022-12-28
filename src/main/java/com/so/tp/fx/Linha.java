@@ -6,14 +6,12 @@ import java.util.concurrent.Semaphore;
 
 public class Linha {
     private int numero;
-    private String sentido;
     private List<Estacao> estacoes;
     private Semaphore semaphore;
     private List<Comboio> trains;
 
-    public Linha(int numero, String sentido, List<Estacao> estacoes) {
+    public Linha(int numero, List<Estacao> estacoes) {
         this.numero = numero;
-        this.sentido = sentido;
         this.estacoes = estacoes;
         this.semaphore = new Semaphore(1);
         this.trains = new ArrayList<>();
@@ -25,14 +23,6 @@ public class Linha {
 
     public void setNumero(int numero) {
         this.numero = numero;
-    }
-
-    public String getSentido() {
-        return sentido;
-    }
-
-    public void setSentido(String sentido) {
-        this.sentido = sentido;
     }
 
     public List<Estacao> getEstacoes() {

@@ -3,8 +3,136 @@ package com.so.tp.fx;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.sql.*;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 public class PainelControlo {
+
+    public static void getDados() throws IOException, ClassNotFoundException{
+
+        List<Estacao> estacoesLinhaPorto1 = new LinkedList<>();
+        List<Estacao> estacoesLinhaPorto2 = new LinkedList<>();
+        List<Estacao> estacoesLinhaPorto3 = new LinkedList<>();
+
+        Map<Integer, Linha> linhas = new HashMap<>();
+
+        List<Horario> horariosLinhaPorto1 = new LinkedList<>();
+        List<Horario> horariosLinhaPorto2 = new LinkedList<>();
+        List<Horario> horariosLinhaPorto3 = new LinkedList<>();
+
+        try {
+            // Carregue o driver JDBC
+            Class.forName("com.mysql.cj.jdbc.Driver");
+
+            // Crie a conexão com a base de dados
+            String url = "jdbc:mysql://localhost/station";
+            String username = "root";
+            String password = "";
+            Connection connection = DriverManager.getConnection(url, username, password);
+
+            // get estacoes
+            try {
+                // Crie a consulta SQL para selecionar os dados das estações
+                String sql = "SELECT estacoes.numero, estacoes.nome, estacoes.lotacao, linhas.nome as nomeLinha FROM estacoes, linhas_estacoes, linhas WHERE estacoes.numero = linhas_estacoes.id_estacao AND linhas.numero = linhas_estacoes.id_linha";
+                Statement stmt = connection.createStatement();
+                ResultSet rs = stmt.executeQuery(sql);
+
+                while (rs.next()) {
+                    int numero = rs.getInt("numero");
+                    String nome = rs.getString("nome");
+                    String nomeLinha = rs.getString("nomeLinha");
+                    int lotacao = rs.getInt("lotacao");
+                    Estacao estacao = new Estacao(numero, nome, lotacao);
+
+                    switch (nomeLinha) {
+                        case "Porto_1" -> estacoesLinhaPorto1.add(estacao);
+                        case "Porto_2" -> estacoesLinhaPorto2.add(estacao);
+                        case "Porto_3" -> estacoesLinhaPorto3.add(estacao);
+                    }
+                }
+                stmt.close();
+                rs.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            // fim get estacoes
+
+            // get linhas
+            try {
+                // Crie a consulta SQL para selecionar os dados das estações
+                String sql = "SELECT * FROM `linhas`";
+                Statement stmt = connection.createStatement();
+                ResultSet rs = stmt.executeQuery(sql);
+
+                while (rs.next()) {
+                    int numero = rs.getInt("numero");
+                    String nome = rs.getString("nome");
+
+                    if (nome.equals("Porto_1")) {
+                        Linha linha = new Linha(numero, estacoesLinhaPorto1);
+                        linhas.put(numero, linha);
+                    } else if (nome.equals("Porto_2")) {
+                        Linha linha = new Linha(numero, estacoesLinhaPorto2);
+                        linhas.put(numero, linha);
+                    } else if (nome.equals("Porto_3")) {
+                        Linha linha = new Linha(numero, estacoesLinhaPorto3);
+                        linhas.put(numero, linha);
+                    }
+
+                }
+                stmt.close();
+                rs.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            // fim get linhas
+
+            // get horarios
+            try {
+                // Crie a consulta SQL para selecionar os dados das estações
+                String sql = "SELECT horarios.numero, horarios.sentido, horarios.horaPartida, horarios.horaChegada, linhas.numero AS idLinha , linhas.nome AS nomeLinha FROM horarios, linhas WHERE horarios.id_linha = linhas.numero";
+                Statement stmt = connection.createStatement();
+                ResultSet rs = stmt.executeQuery(sql);
+
+                while (rs.next()) {
+                    int numero = rs.getInt("numero");
+                    String sentido = rs.getString("sentido");
+                    String nomeLinha = rs.getString("nomeLinha");
+                    String horaPartida = rs.getString("horaPartida");
+                    String horaChegada = rs.getString("horaChegada");
+                    int idLinha = rs.getInt("idLinha");
+
+                    Horario horario = new Horario(horaPartida, horaChegada, linhas.get(idLinha), sentido);
+
+                    switch (nomeLinha) {
+                        case "Porto_1" -> horariosLinhaPorto1.add(horario);
+                        case "Porto_2" -> horariosLinhaPorto2.add(horario);
+                        case "Porto_3" -> horariosLinhaPorto3.add(horario);
+                    }
+
+                }
+                stmt.close();
+                rs.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            // fim get horarios
+
+            // Feche a conexão com a base de dados
+            connection.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        //fim get estacoes
+
+    }
 
     public static Estacao[] estacoes = new Estacao[100];
 
