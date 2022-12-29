@@ -102,13 +102,7 @@ public class Main extends Application {
         Linha linhaPorto2 = new Linha(3, estacoesLinhaPorto2);
         Linha linhaPorto3 = new Linha(5, estacoesLinhaPorto3);
 
-        // Guarda as linhas num map
-        Map<Integer, Linha> linhas = new HashMap<>();
-        linhas.put(linhaPorto1.getNumero(), linhaPorto1);
-        linhas.put(linhaPorto2.getNumero(), linhaPorto2);
-        linhas.put(linhaPorto3.getNumero(), linhaPorto3);
-
-        // Cria alguns horários
+        // Cria alguns horários, agora os sentidos das linhas são definidos aqui
         Horario horario1 = new Horario("8:00", "9:00", linhaPorto1, "Ida");
         Horario horario2 = new Horario("9:00", "10:00", linhaPorto1, "Volta");
         Horario horario3 = new Horario("10:00", "11:00", linhaPorto1, "Ida");
@@ -148,6 +142,9 @@ public class Main extends Application {
         Bilhete bilhete7 = new Bilhete(7, estacao3, estacao1, linhaPorto1, "Volta");
         Bilhete bilhete8 = new Bilhete(8, estacao7, estacao12, linhaPorto1, "Volta");
 
+        //Bilhete teste para o ver a prioridade de entrada ao passageiro com o percurso mais curto
+        Bilhete bilhete9 = new Bilhete(6, estacao5, estacao3, linhaPorto1, "Volta");
+
         //Passageiros linha1
         Passageiro passageiro1 = new Passageiro(1, "João", bilhete1, estacao1);
         Passageiro passageiro2 = new Passageiro(2, "Maria", bilhete2, estacao1);
@@ -168,16 +165,20 @@ public class Main extends Application {
         Passageiro passageiro9 = new Passageiro(9, "Catarina", bilhete8, estacao7);
         Passageiro passageiro10 = new Passageiro(10, "Joana", bilhete8, estacao7);
 
+        //Passageiro teste para o ver a prioridade de entrada ao passageiro com o percurso mais curto
+        Passageiro passageiro11 = new Passageiro(11, "Celina", bilhete9, estacao5);
+
         passageiros.add(passageiro6);
         passageiros.add(passageiro7);
         passageiros.add(passageiro8);
         passageiros.add(passageiro9);
         passageiros.add(passageiro10);
+        passageiros.add(passageiro11);
 
         List<Comboio> comboios = new LinkedList<>();
 
         Comboio comboio1 = new Comboio(1, 100, horariosLinhaPorto1, passageiros);
-        Comboio comboio3 = new Comboio(3, 100, horariosLinhaPorto2, passageiros);
+        Comboio comboio3 = new Comboio(3, 1, horariosLinhaPorto2, passageiros);
 
         comboios.add(comboio1);
         comboios.add(comboio3);

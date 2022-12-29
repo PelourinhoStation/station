@@ -9,6 +9,7 @@ public class Passageiro {
     private boolean tentouEntrar;
     private boolean estaNoComboio;
     private boolean saiuDoComboio;
+    private int numEstacoesBilhete;
 
     public Passageiro(int numero, String nome, Bilhete bilhete, Estacao estacaoEntrada) {
         this.numero = numero;
@@ -19,6 +20,7 @@ public class Passageiro {
         this.tentouEntrar = false;
         this.estaNoComboio = false;
         this.saiuDoComboio = false;
+        this.numEstacoesBilhete = 0;
     }
 
     public int getNumero() {
@@ -84,4 +86,24 @@ public class Passageiro {
     public void setSaiuDoComboio(boolean saiuDoComboio) {
         this.saiuDoComboio = saiuDoComboio;
     }
+
+    public int getNumEstacoesBilhete() {
+        return numEstacoesBilhete;
+    }
+
+    public void setNumEstacoesBilhete(int numEstacoesBilhete) {
+        this.numEstacoesBilhete = numEstacoesBilhete;
+    }
+
+    public void contarEscaoesBilhete(Passageiro passageiro) {
+        setNumEstacoesBilhete(passageiro.getEstacaoEntrada().getNumero() - passageiro.getBilhete().getEstacaoSaida().getNumero());
+
+        if (getNumEstacoesBilhete() < 0) {
+            setNumEstacoesBilhete(getNumEstacoesBilhete() * -1);
+        }
+
+        System.out.println("O passageiro " + passageiro.getNome() + " vai viajar por " + getNumEstacoesBilhete() + " estações.");
+    }
+
 }
+

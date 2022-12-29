@@ -137,11 +137,13 @@ public class Comboio extends Thread {
             passageiro.setTentouEntrar(true); //é registado que o passageiro tentou entrar no comboio
         } else if (!passageiro.isEstaNoComboio() && !passageiro.isSaiuDoComboio()) { //senão se o passageiro não estiver no comboio e não tiver saído do comboio antes
             if (!this.isOvercrowded()) {
+                //verifica o passageiro que tem a viagem menor
                 passageiro.setComboio(this); //registar o comboio em que o passageiro está
                 this.addPassenger(passageiro); //adiciona o passageiro ao comboio
                 passageiro.setEstaNoComboio(true); //registamos que o passageiro está no comboio
                 // sout do embarque
                 System.out.println("Passageiro " + passageiro.getNome() + " embarcou no comboio " + getNumero() + " na estação " + getEstacaoAtual().getNome());
+                passageiro.contarEscaoesBilhete(passageiro);
             } else {
                 System.out.println("Passageiro " + passageiro.getNome() + " não embarcou no comboio " + getNumero() + " na estação " + getEstacaoAtual().getNome() + "porque o comboio estava sobrelotado");
             }
