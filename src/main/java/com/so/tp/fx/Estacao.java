@@ -78,16 +78,19 @@ public class Estacao {
         return numComboios >= maxComboios;
     }
 
-    public void addTrain() throws InterruptedException {
+    public void addTrain(Comboio comboio) throws InterruptedException {
      try{
         semaforo.acquire();
         //verificar se a estação está sobrelotada
-         if (numComboios == maxComboios){
-             System.out.println("A estação " + nome + " está lotada de comboios");
-             return;
-         } else {
+         if (numComboios < maxComboios && numComboios + 1 < maxComboios){
              numComboios++;
              System.out.println("A estação " + getNumero() + " tem " + numComboios + " comboios");
+         } else if (numComboios + 1 == maxComboios ){
+             numComboios++;
+             System.out.println("\033[1;31mA estação\033[0m " + nome + " \033[1;31macabou de ficar lotada\033[0m");
+         } else {
+             System.out.println("\033[1;31mA estação\033[0m " + nome + " \033[1;31mestá lotada de comboios, o comboio\033[0m " + comboio.getNumero() +" \033[1;31maguarda entrada\033[0m");
+             return;
          }
      } finally {
             semaforo.release();
@@ -97,7 +100,7 @@ public class Estacao {
     public void removeTrain() {
         try{
             numComboios--;
-            System.out.println("A estação " + getNumero() + " tem " + numComboios + " comboios");
+            //System.out.println("A estação " + getNumero() + " tem " + numComboios + " comboios");
         } finally {
             semaforo.release();
         }

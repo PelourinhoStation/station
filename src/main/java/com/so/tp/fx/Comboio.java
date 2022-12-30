@@ -193,17 +193,17 @@ public class Comboio extends Thread {
 
                 // Verifica se a estação atual está sobrelotada de passageiros
                 if (currentStation.isOvercrowded()) {
-                    System.out.println("Conflito na estação " + currentStation.getNumero() + ": estação sobrelotada de passageiros");
+                    //System.out.println("Conflito na estação " + currentStation.getNumero() + ": estação sobrelotada de passageiros");
                 }
 
                  // Verifica se a estação atual está sobrelotada de comboios
                 if (currentStation.isFull()) {
-                    System.out.println("Conflito na estação " + currentStation.getNumero() + ": estação sobrelotada de comboios");
+                    //System.out.println("Conflito na estação " + currentStation.getNumero() + ": estação sobrelotada de comboios");
                 }
 
                 //adicionar comboio a estação
                 try {
-                    currentStation.addTrain();
+                    currentStation.addTrain(this);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }

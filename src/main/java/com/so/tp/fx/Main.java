@@ -80,6 +80,14 @@ public class Main extends Application {
         estacoesLinhaPorto1.add(estacao4);
         estacoesLinhaPorto1.add(estacao5);
         estacoesLinhaPorto1.add(estacao6);
+        estacoesLinhaPorto1.add(estacao7);
+
+        //Estações da linha porto1 mas em sentido contrário
+        List<Estacao> estacoesLinhaPorto1Volta = new LinkedList<>();
+        for (int i = estacoesLinhaPorto1.size() - 1; i >= 0; i--) {
+            estacoesLinhaPorto1Volta.add(estacoesLinhaPorto1.get(i));
+            //System.out.println(estacoesLinhaPorto1.get(i).getNome());
+        }
 
         List<Estacao> estacoesLinhaPorto2 = new LinkedList<>();
         estacoesLinhaPorto2.add(estacao7);
@@ -102,10 +110,15 @@ public class Main extends Application {
         Linha linhaPorto2 = new Linha(3, estacoesLinhaPorto2);
         Linha linhaPorto3 = new Linha(5, estacoesLinhaPorto3);
 
+        //Linha porto 4 percorre todas as estações da linha porto 1 mas em sentido contrário
+        Linha linhaPorto1Volta = new Linha(7, estacoesLinhaPorto1Volta);
+
         // Cria alguns horários, agora os sentidos das linhas são definidos aqui
         Horario horario1 = new Horario("8:00", "9:00", linhaPorto1, "Ida");
         Horario horario2 = new Horario("9:00", "10:00", linhaPorto1, "Volta");
-        Horario horario3 = new Horario("10:00", "11:00", linhaPorto1, "Ida");
+
+        //Percurso contrário ao do horário 1
+        Horario horario3 = new Horario("10:00", "11:00", linhaPorto1Volta, "Ida");
 
         Horario horario4 = new Horario("8:00", "9:00", linhaPorto2, "Ida");
         Horario horario6 = new Horario("10:00", "11:00", linhaPorto2, "Volta");
@@ -129,6 +142,9 @@ public class Main extends Application {
         horariosLinhaPorto3.add(horario7);
         //horariosLinhaPorto3.add(horario8);
         //horariosLinhaPorto3.add(horario9);
+
+        List<Horario> horariosLinhaPorto1Volta = new LinkedList<>();
+        horariosLinhaPorto1Volta.add(horario3);
 
         // Bilhetes linha1
         Bilhete bilhete1 = new Bilhete(1, estacao1, estacao4, linhaPorto1, "Ida");
@@ -177,10 +193,13 @@ public class Main extends Application {
 
         List<Comboio> comboios = new LinkedList<>();
 
+        //comboio 1 e 2 fazem o mesmo percurso mas em sentido contrário (encontram-se na estação 4 para verificar se os dois comboios entram ao mesmo tempo)
         Comboio comboio1 = new Comboio(1, 100, horariosLinhaPorto1, passageiros);
+        Comboio comboio2 = new Comboio(2, 100, horariosLinhaPorto1Volta, passageiros);
         Comboio comboio3 = new Comboio(3, 2, horariosLinhaPorto2, passageiros);
 
         comboios.add(comboio1);
+        comboios.add(comboio2);
         comboios.add(comboio3);
 
         iniciaComboios(comboios);
