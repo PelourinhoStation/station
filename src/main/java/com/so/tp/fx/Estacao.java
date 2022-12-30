@@ -10,13 +10,16 @@ public class Estacao {
     private int numComboios;
     private int maxComboios;
 
+    private Semaphore semaforo;
+
     public Estacao(int numero, String nome, int lotacao) {
         this.numero = numero;
         this.nome = nome;
         this.lotacao = lotacao;
         this.passageiros = 0;
         this.numComboios = 0;
-        this.maxComboios = 3;
+        this.maxComboios = 1;
+        this.semaforo = new Semaphore(1);
     }
 
     public int getNumero() {
@@ -75,14 +78,29 @@ public class Estacao {
         return numComboios >= maxComboios;
     }
 
-    public void addTrain() {
-        numComboios++;
-        System.out.println("A estação " + getNumero() + " tem " + numComboios + " comboios");
+    public void addTrain() throws InterruptedException {
+     try{
+        semaforo.acquire();
+        //verificar se a estação está sobrelotada
+         if (numComboios == maxComboios){
+             System.out.println("A estação " + nome + " está lotada de comboios");
+             return;
+         } else {
+             numComboios++;
+             System.out.println("A estação " + getNumero() + " tem " + numComboios + " comboios");
+         }
+     } finally {
+            semaforo.release();
+     }
     }
 
     public void removeTrain() {
-        numComboios--;
-        System.out.println("A estação " + getNumero() + " tem " + numComboios + " comboios");
+        try{
+            numComboios--;
+            System.out.println("A estação " + getNumero() + " tem " + numComboios + " comboios");
+        } finally {
+            semaforo.release();
+        }
     }
 
     public void addPassenger(Passageiro passageiro) {

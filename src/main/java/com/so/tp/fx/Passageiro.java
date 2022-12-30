@@ -95,7 +95,7 @@ public class Passageiro {
         this.numEstacoesBilhete = numEstacoesBilhete;
     }
 
-    public void contarEscaoesBilhete(Passageiro passageiro) {
+    public void contarEstacoesBilhete(Passageiro passageiro) {
         setNumEstacoesBilhete(passageiro.getEstacaoEntrada().getNumero() - passageiro.getBilhete().getEstacaoSaida().getNumero());
 
         if (getNumEstacoesBilhete() < 0) {
@@ -104,6 +104,5 @@ public class Passageiro {
 
         System.out.println("O passageiro " + passageiro.getNome() + " vai viajar por " + getNumEstacoesBilhete() + " estações.");
     }
-
 }
 

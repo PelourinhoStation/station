@@ -178,7 +178,8 @@ public class Main extends Application {
         List<Comboio> comboios = new LinkedList<>();
 
         Comboio comboio1 = new Comboio(1, 100, horariosLinhaPorto1, passageiros);
-        Comboio comboio3 = new Comboio(3, 1, horariosLinhaPorto2, passageiros);
+        Comboio comboio2 = new Comboio(2, 100, h, passageiros);
+        Comboio comboio3 = new Comboio(3, 2, horariosLinhaPorto2, passageiros);
 
         comboios.add(comboio1);
         comboios.add(comboio3);

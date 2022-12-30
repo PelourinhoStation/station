@@ -136,14 +136,16 @@ public class Comboio extends Thread {
         if (!passageiro.getBilhete().isValido(passageiro, comboio)) {
             passageiro.setTentouEntrar(true); //é registado que o passageiro tentou entrar no comboio
         } else if (!passageiro.isEstaNoComboio() && !passageiro.isSaiuDoComboio()) { //senão se o passageiro não estiver no comboio e não tiver saído do comboio antes
-            if (!this.isOvercrowded()) {
+            if (!this.isOvercrowded() && comboio.nPassageiros + 1 < comboio.getLotacao()) { //se o comboio não estiver sobrelotado e se o número de passageiros no comboio for menor que a lotação do comboio
                 //verifica o passageiro que tem a viagem menor
                 passageiro.setComboio(this); //registar o comboio em que o passageiro está
                 this.addPassenger(passageiro); //adiciona o passageiro ao comboio
                 passageiro.setEstaNoComboio(true); //registamos que o passageiro está no comboio
                 // sout do embarque
                 System.out.println("Passageiro " + passageiro.getNome() + " embarcou no comboio " + getNumero() + " na estação " + getEstacaoAtual().getNome());
-                passageiro.contarEscaoesBilhete(passageiro);
+                passageiro.contarEstacoesBilhete(passageiro);
+            } else if (!this.isOvercrowded() && comboio.nPassageiros + 1 == comboio.getLotacao()){
+
             } else {
                 System.out.println("Passageiro " + passageiro.getNome() + " não embarcou no comboio " + getNumero() + " na estação " + getEstacaoAtual().getNome() + "porque o comboio estava sobrelotado");
             }
@@ -158,6 +160,13 @@ public class Comboio extends Thread {
             passageiro.setSaiuDoComboio(true); //registamos que o passageiro saiu do comboio
             // sout do desembarque
             System.out.println("Passageiro " + passageiro.getNome() + " desembarcou do comboio " + getNumero() + " na estação " + getEstacaoAtual().getNome());
+        }
+    }
+
+   public void verEntradaPassageiros(Passageiro passageiro) {
+        for (int i = 0; i < passageiros.size(); i++) {
+            System.out.println("Passageiro " + passageiro.getNome() + "entra na estação " + passageiro.getEstacaoEntrada().getNome());
+            break;
         }
     }
 
@@ -193,7 +202,11 @@ public class Comboio extends Thread {
                 }
 
                 //adicionar comboio a estação
-                currentStation.addTrain();
+                try {
+                    currentStation.addTrain();
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
 
                 // Abre as portas do comboio a cada 5 segundos
                 try {
