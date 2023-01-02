@@ -9,7 +9,7 @@ public class Estacao {
     private int passageiros;
     private int numComboios;
     private int maxComboios;
-
+    private int emEspera;
     private Semaphore semaforo;
 
     public Estacao(int numero, String nome, int lotacao) {
@@ -20,6 +20,7 @@ public class Estacao {
         this.numComboios = 0;
         this.maxComboios = 1;
         this.semaforo = new Semaphore(1);
+        this.emEspera = 0;
     }
 
     public int getNumero() {
@@ -77,12 +78,18 @@ public class Estacao {
     public boolean isFull() {
         return numComboios >= maxComboios;
     }
+    public int getEmEspera() {
+        return emEspera;
+    }
+    public void setEmEspera() {
+        this.emEspera++;
+    }
 
     public void addTrain(Comboio comboio) throws InterruptedException {
      try{
         semaforo.acquire();
-        //verificar se a estação está sobrelotada
-         if (numComboios < maxComboios && numComboios + 1 < maxComboios){
+
+        if (numComboios < maxComboios && numComboios + 1 < maxComboios){
              numComboios++;
              System.out.println("A estação " + getNumero() + " tem " + numComboios + " comboios");
          } else if (numComboios + 1 == maxComboios ){
@@ -90,11 +97,14 @@ public class Estacao {
              System.out.println("\033[1;31mA estação\033[0m " + nome + " \033[1;31macabou de ficar lotada\033[0m");
          } else {
              System.out.println("\033[1;31mA estação\033[0m " + nome + " \033[1;31mestá lotada de comboios, o comboio\033[0m " + comboio.getNumero() +" \033[1;31maguarda entrada\033[0m");
-             return;
          }
-     } finally {
-            semaforo.release();
-     }
+
+     } catch (InterruptedException e) {
+         throw new RuntimeException(e);
+     } //o semaforo não pode ser libertado porque o comboio ainda não saiu da estação, esta instrução apenas deve ser executada quando o comboio sair da estação, ou seja, na função removeTrain
+     //} finally {
+     //    semaforo.release();
+     //}
     }
 
     public void removeTrain() {

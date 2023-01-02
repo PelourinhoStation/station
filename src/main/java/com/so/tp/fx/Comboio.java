@@ -10,15 +10,10 @@ public class Comboio extends Thread {
     private List<Horario> horarios;
     private int nPassageiros;
     private Estacao estacaoAtual;
-
     private Horario horarioAtual;
-
     private boolean portasAbertas;
-
     private Semaphore semaforo;
-
     private List<Passageiro> passageiros;
-
     private static List<Comboio> comboios = new LinkedList<>(); // lista de comboios
 
     public Comboio(int numero, int lotacao, List<Horario> horarios, List<Passageiro> passageiros) {
@@ -189,8 +184,6 @@ public class Comboio extends Thread {
             // Código para percorrer as estações da linha
             for (Estacao estacao : line.getEstacoes()) {
 
-                System.out.println("Comboio " + getNumero() + " a chegar à estação " + currentStation.getNumero() + "-" + currentStation.getNome() + "...");
-
                 // Verifica se a estação atual está sobrelotada de passageiros
                 if (currentStation.isOvercrowded()) {
                     //System.out.println("Conflito na estação " + currentStation.getNumero() + ": estação sobrelotada de passageiros");
@@ -203,6 +196,7 @@ public class Comboio extends Thread {
 
                 //adicionar comboio a estação
                 try {
+                    currentStation.setEmEspera();
                     currentStation.addTrain(this);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
@@ -269,9 +263,8 @@ public class Comboio extends Thread {
                 }
 
                 //remove comboio da estação
-                currentStation.removeTrain();
                 System.out.println("Comboio " + getNumero() + " a sair da estação " + currentStation.getNumero() + "-" + currentStation.getNome() + "...");
-
+                currentStation.removeTrain();
 
                 // Atualiza a estação atual
                 currentStation = nextStation;

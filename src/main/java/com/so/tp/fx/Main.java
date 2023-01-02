@@ -193,14 +193,14 @@ public class Main extends Application {
 
         List<Comboio> comboios = new LinkedList<>();
 
-        //comboio 1 e 2 fazem o mesmo percurso mas em sentido contrário (encontram-se na estação 4 para verificar se os dois comboios entram ao mesmo tempo)
+        //comboio 1 e dois vazem a volta no mesmo sentido para testar a entrada de um de cada vez nas estações
         Comboio comboio1 = new Comboio(1, 100, horariosLinhaPorto1, passageiros);
-        Comboio comboio2 = new Comboio(2, 100, horariosLinhaPorto1Volta, passageiros);
+        Comboio comboio2 = new Comboio(2, 100, horariosLinhaPorto1, passageiros);
         Comboio comboio3 = new Comboio(3, 2, horariosLinhaPorto2, passageiros);
 
         comboios.add(comboio1);
         comboios.add(comboio2);
-        comboios.add(comboio3);
+        //comboios.add(comboio3);
 
         iniciaComboios(comboios);
 
