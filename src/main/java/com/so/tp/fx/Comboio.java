@@ -180,6 +180,13 @@ public class Comboio extends Thread {
             }
 
             setEstacaoAtual(currentStation); //atribui a estação atual ao comboio
+            String sentido = horario.getSentido(); //get do sentido do horário atual
+
+            if (sentido.equals("Ida")){
+                System.out.println("Comboio " + getNumero() + " vai partir da estação " + getEstacaoAtual().getNome() + " às " + horario.getHoraPartida() + "h com destino a " + horario.getLinha().getEstacoes().get(horario.getLinha().getEstacoes().size() - 1).getNome() + " e com chegada prevista às " + horario.getHoraChegada() + "h para fazer a linha " + horario.getLinha().getNumero() + " no sentido de " + horario.getSentido());
+            } else {
+                System.out.println("Comboio " + getNumero() + " vai partir da estação " + getEstacaoAtual().getNome() + " às " + horario.getHoraPartida() + "h com destino a " + horario.getLinha().getEstacoes().get(0).getNome() + " e com chegada prevista às " + horario.getHoraChegada() + "h para fazer a linha " + horario.getLinha().getNumero() + " no sentido de " + horario.getSentido());
+            }
 
             // Código para percorrer as estações da linha
             for (Estacao estacao : line.getEstacoes()) {
@@ -208,6 +215,7 @@ public class Comboio extends Thread {
 
                     //verifica se há passageiros no comboio que querem sair na estação atual
                     for (Passageiro passageiro : passageiros) {
+                        // o passgeiro só entre se a linha que tem no seu bilhete for igual à linha que o comboio está a precorrer.
                         if (passageiro.getBilhete().getEstacaoSaida().getNumero() == currentStation.getNumero() && passageiro.getBilhete().getLinha().getNumero() == line.getNumero() && passageiro.isEstaNoComboio()) {
                             this.desembarcarPassageiro(passageiro);
                         }

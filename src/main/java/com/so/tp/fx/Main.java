@@ -80,7 +80,6 @@ public class Main extends Application {
         estacoesLinhaPorto1.add(estacao4);
         estacoesLinhaPorto1.add(estacao5);
         estacoesLinhaPorto1.add(estacao6);
-        estacoesLinhaPorto1.add(estacao7);
 
         //Estações da linha porto1 mas em sentido contrário
         List<Estacao> estacoesLinhaPorto1Volta = new LinkedList<>();
@@ -107,14 +106,15 @@ public class Main extends Application {
 
         // Cria algumas linhas
         Linha linhaPorto1 = new Linha(1, estacoesLinhaPorto1);
-        Linha linhaPorto2 = new Linha(3, estacoesLinhaPorto2);
-        Linha linhaPorto3 = new Linha(5, estacoesLinhaPorto3);
+        Linha linhaPorto2 = new Linha(2, estacoesLinhaPorto2);
+        Linha linhaPorto3 = new Linha(3, estacoesLinhaPorto3);
 
         //Linha porto 4 percorre todas as estações da linha porto 1 mas em sentido contrário
         Linha linhaPorto1Volta = new Linha(7, estacoesLinhaPorto1Volta);
 
         // Cria alguns horários, agora os sentidos das linhas são definidos aqui
         Horario horario1 = new Horario("8:00", "9:00", linhaPorto1, "Ida");
+
         Horario horario2 = new Horario("9:00", "10:00", linhaPorto1, "Volta");
 
         //Percurso contrário ao do horário 1
@@ -130,7 +130,7 @@ public class Main extends Application {
         // Coloca-os numa lista ligada
         List<Horario> horariosLinhaPorto1 = new LinkedList<>();
         horariosLinhaPorto1.add(horario1);
-        //horariosLinhaPorto1.add(horario2);
+        horariosLinhaPorto1.add(horario2);
         //horariosLinhaPorto1.add(horario3);
 
         List<Horario> horariosLinhaPorto2 = new LinkedList<>();
@@ -153,10 +153,10 @@ public class Main extends Application {
         Bilhete bilhete4 = new Bilhete(4, estacao4, estacao6, linhaPorto1, "Ida");
 
         //Bilhetes linha1 - volta
-        Bilhete bilhete5 = new Bilhete(5, estacao6, estacao1, linhaPorto1, "Volta");
-        Bilhete bilhete6 = new Bilhete(6, estacao5, estacao2, linhaPorto1, "Volta");
-        Bilhete bilhete7 = new Bilhete(7, estacao3, estacao1, linhaPorto1, "Volta");
-        Bilhete bilhete8 = new Bilhete(8, estacao7, estacao12, linhaPorto1, "Volta");
+        Bilhete bilhete5 = new Bilhete(5, estacao12, estacao7, linhaPorto2, "Volta");
+        Bilhete bilhete6 = new Bilhete(6, estacao11, estacao8, linhaPorto2, "Volta");
+        Bilhete bilhete7 = new Bilhete(7, estacao9, estacao7, linhaPorto2, "Volta");
+        Bilhete bilhete8 = new Bilhete(8, estacao10, estacao8, linhaPorto2, "Volta");
 
         //Bilhete teste para o ver a prioridade de entrada ao passageiro com o percurso mais curto
         Bilhete bilhete9 = new Bilhete(6, estacao5, estacao3, linhaPorto1, "Volta");
@@ -166,19 +166,17 @@ public class Main extends Application {
         Passageiro passageiro2 = new Passageiro(2, "Maria", bilhete2, estacao1);
         Passageiro passageiro3 = new Passageiro(3, "Pedro", bilhete3, estacao3);
         Passageiro passageiro4 = new Passageiro(4, "Ana", bilhete4, estacao3);
-        Passageiro passageiro5 = new Passageiro(5, "Rosa", bilhete5, estacao1);
 
         passageiros.add(passageiro1);
         passageiros.add(passageiro2);
         passageiros.add(passageiro3);
         passageiros.add(passageiro4);
-        passageiros.add(passageiro5);
 
-        //Passageiros linha1 - volta
-        Passageiro passageiro6 = new Passageiro(6, "Gonçalo", bilhete1, estacao6);
-        Passageiro passageiro7 = new Passageiro(7, "Célia", bilhete6, estacao5);
-        Passageiro passageiro8 = new Passageiro(8, "Carlos", bilhete7, estacao3);
-        Passageiro passageiro9 = new Passageiro(9, "Catarina", bilhete8, estacao7);
+        //Passageiros linha2
+        Passageiro passageiro6 = new Passageiro(6, "Gonçalo", bilhete5, estacao12);
+        Passageiro passageiro7 = new Passageiro(7, "Célia", bilhete6, estacao11);
+        Passageiro passageiro8 = new Passageiro(8, "Carlos", bilhete7, estacao9);
+        Passageiro passageiro9 = new Passageiro(9, "Catarina", bilhete8, estacao10);
         Passageiro passageiro10 = new Passageiro(10, "Joana", bilhete8, estacao7);
 
         //Passageiro teste para o ver a prioridade de entrada ao passageiro com o percurso mais curto
@@ -189,17 +187,17 @@ public class Main extends Application {
         passageiros.add(passageiro8);
         passageiros.add(passageiro9);
         passageiros.add(passageiro10);
-        passageiros.add(passageiro11);
+        //passageiros.add(passageiro11);
 
         List<Comboio> comboios = new LinkedList<>();
 
         //comboio 1 e dois vazem a volta no mesmo sentido para testar a entrada de um de cada vez nas estações
         Comboio comboio1 = new Comboio(1, 100, horariosLinhaPorto1, passageiros);
-        Comboio comboio2 = new Comboio(2, 100, horariosLinhaPorto1, passageiros);
-        Comboio comboio3 = new Comboio(3, 2, horariosLinhaPorto2, passageiros);
+        Comboio comboio2 = new Comboio(2, 100, horariosLinhaPorto2, passageiros);
+        //Comboio comboio3 = new Comboio(3, 2, horariosLinhaPorto2, passageiros);
 
         comboios.add(comboio1);
-        comboios.add(comboio2);
+        //comboios.add(comboio2);
         //comboios.add(comboio3);
 
         iniciaComboios(comboios);
@@ -277,8 +275,9 @@ public class Main extends Application {
 
         //metodo para percorrer os comboios dados como prontos para partir
         for (Comboio comboio : comboiosParaPartir) {
-            System.out.println("Comboio " + comboio.getNumero() + " partiu"); //imprime os comboios que vão partir
             comboio.start(); //inicia os comboios que estão na lista
         }
+
+
     }
 }

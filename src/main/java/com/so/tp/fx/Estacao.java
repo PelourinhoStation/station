@@ -6,21 +6,17 @@ public class Estacao {
     private int numero;
     private String nome;
     private int lotacao;
-    private int passageiros;
     private int numComboios;
     private int maxComboios;
-    private int emEspera;
     private Semaphore semaforo;
 
     public Estacao(int numero, String nome, int lotacao) {
         this.numero = numero;
         this.nome = nome;
         this.lotacao = lotacao;
-        this.passageiros = 0;
         this.numComboios = 0;
         this.maxComboios = 1;
         this.semaforo = new Semaphore(1);
-        this.emEspera = 0;
     }
 
     public int getNumero() {
@@ -47,14 +43,6 @@ public class Estacao {
         this.lotacao = lotacao;
     }
 
-    public int getPassageiros() {
-        return passageiros;
-    }
-
-    public void setPassageiros(int passageiros) {
-        this.passageiros = passageiros;
-    }
-
     public int getNumComboios() {
         return numComboios;
     }
@@ -71,18 +59,8 @@ public class Estacao {
         this.maxComboios = maxComboios;
     }
 
-    public boolean isOvercrowded() {
-        return passageiros >= lotacao;
-    }
-
     public boolean isFull() {
         return numComboios >= maxComboios;
-    }
-    public int getEmEspera() {
-        return emEspera;
-    }
-    public void setEmEspera() {
-        this.emEspera++;
     }
 
     public void addTrain(Comboio comboio) throws InterruptedException {
@@ -114,18 +92,5 @@ public class Estacao {
         } finally {
             semaforo.release();
         }
-    }
-
-    public void addPassenger(Passageiro passageiro) {
-        // Verifica se o comboio está sobrelotado
-        if (isOvercrowded()) {
-            System.out.println("Conflito no comboio " + getNumero() + ": comboio sobrelotado");
-            return;
-        }
-        passageiros++;
-    }
-
-    public void removePassenger(Passageiro passageiro) {
-        passageiros--;
     }
 }
