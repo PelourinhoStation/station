@@ -16,16 +16,17 @@ public class Comboio extends Thread {
     private List<Passageiro> passageiros;
     private static List<Comboio> comboios = new LinkedList<>(); // lista de comboios
 
-    public Comboio(int numero, int lotacao, List<Horario> horarios, List<Passageiro> passageiros) {
+    public Comboio(int numero, int lotacao) {
         this.numero = numero;
         this.lotacao = lotacao;
-        this.horarios = horarios;
+        this.horarios = null;
         this.nPassageiros = 0;
         this.estacaoAtual = null;
         this.portasAbertas = false;
         this.semaforo = new Semaphore(1);
-        this.passageiros = passageiros;
+        this.passageiros = null;
         this.horarioAtual = null;
+        this.horarios = new LinkedList<>();
         comboios.add(this);
     }
 
@@ -57,16 +58,16 @@ public class Comboio extends Thread {
         this.horarioAtual = horarioAtual;
     }
 
-    public void setHorarios(List<Horario> horarios) {
-        this.horarios = horarios;
+    public void setHorarios(Horario horario) {
+        this.horarios.add(horario);
     }
 
     public int getPassageiros() {
         return nPassageiros;
     }
 
-    public void setPassageiros(int nPassageiros) {
-        this.nPassageiros = nPassageiros;
+    public void setPassageiros(List<Passageiro> passageiros) {
+        this.passageiros = passageiros;
     }
 
     public Estacao getEstacaoAtual() {
@@ -168,33 +169,33 @@ public class Comboio extends Thread {
     public void run() {
 
         // Código para percorrer os horarios atribuidos ao comboio
-        for (Horario horario : horarios) {
-            this.setHorarioAtual(horario); //atribui o horário atual ao comboio
-            Linha line = horario.getLinha(); //get da linha do horário atual
+        System.out.println(horarios.size());
+        System.out.println(horarios.get(0).getLinha());
+        System.out.println(horarios.get(1).getLinha());
+
+        for (int i = 0; i < horarios.size(); i++) {
+            this.setHorarioAtual(horarios.get(i)); //atribui o horário atual ao comboio
+            Linha line = horarios.get(i).getLinha(); //get da linha do horário atual
             Estacao currentStation;
 
-            if (horario.getSentido() == "Ida") { //se o sentido da linha for "Ida"
+            if (horarios.get(i).getSentido().equals("Ida")) { //se o sentido da linha for "Ida"
                 currentStation = line.getEstacoes().get(0); //get da primeira estação da linha
             } else { // se o sentido da linha for "Volta"
                 currentStation = line.getEstacoes().get(line.getEstacoes().size() - 1); // get da última estação da linha
             }
 
             setEstacaoAtual(currentStation); //atribui a estação atual ao comboio
-            String sentido = horario.getSentido(); //get do sentido do horário atual
+            String sentido = horarios.get(i).getSentido(); //get do sentido do horário atual
+
 
             if (sentido.equals("Ida")){
-                System.out.println("Comboio " + getNumero() + " vai partir da estação " + getEstacaoAtual().getNome() + " às " + horario.getHoraPartida() + "h com destino a " + horario.getLinha().getEstacoes().get(horario.getLinha().getEstacoes().size() - 1).getNome() + " e com chegada prevista às " + horario.getHoraChegada() + "h para fazer a linha " + horario.getLinha().getNumero() + " no sentido de " + horario.getSentido());
+                System.out.println("Comboio " + getNumero() + " vai partir da estação " + getEstacaoAtual().getNome() + " às " + horarios.get(i).getHoraPartida() + "h com destino a " + horarios.get(i).getLinha().getEstacoes().get(horarios.get(i).getLinha().getEstacoes().size() - 1).getNome() + " e com chegada prevista às " + horarios.get(i).getHoraChegada() + "h para fazer a linha " + horarios.get(i).getLinha().getNumero() + " no sentido de " + horarios.get(i).getSentido());
             } else {
-                System.out.println("Comboio " + getNumero() + " vai partir da estação " + getEstacaoAtual().getNome() + " às " + horario.getHoraPartida() + "h com destino a " + horario.getLinha().getEstacoes().get(0).getNome() + " e com chegada prevista às " + horario.getHoraChegada() + "h para fazer a linha " + horario.getLinha().getNumero() + " no sentido de " + horario.getSentido());
+                System.out.println("Comboio " + getNumero() + " vai partir da estação " + getEstacaoAtual().getNome() + " às " + horarios.get(i).getHoraPartida() + "h com destino a " + horarios.get(i).getLinha().getEstacoes().get(0).getNome() + " e com chegada prevista às " + horarios.get(i).getHoraChegada() + "h para fazer a linha " + horarios.get(i).getLinha().getNumero() + " no sentido de " + horarios.get(i).getSentido());
             }
 
             // Código para percorrer as estações da linha
             for (Estacao estacao : line.getEstacoes()) {
-
-                // Verifica se a estação atual está sobrelotada de passageiros
-                if (currentStation.isOvercrowded()) {
-                    //System.out.println("Conflito na estação " + currentStation.getNumero() + ": estação sobrelotada de passageiros");
-                }
 
                  // Verifica se a estação atual está sobrelotada de comboios
                 if (currentStation.isFull()) {
@@ -203,7 +204,6 @@ public class Comboio extends Thread {
 
                 //adicionar comboio a estação
                 try {
-                    currentStation.setEmEspera();
                     currentStation.addTrain(this);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
@@ -260,14 +260,10 @@ public class Comboio extends Thread {
                 Estacao nextStation;
 
                 // Verifica se a próxima estação está sobrelotada
-                if (horario.getSentido() == "Ida") {
+                if (horarios.get(i).getSentido().equals("Ida")) {
                     nextStation = line.getEstacaoSeguinte(currentStation);
                 } else {
                     nextStation = line.getEstacaoAnterior(currentStation);
-                }
-
-                if (nextStation != null && nextStation.isOvercrowded()) {
-                    System.out.println("Conflito na estação " + nextStation.getNumero() + ": estação sobrelotada");
                 }
 
                 //remove comboio da estação

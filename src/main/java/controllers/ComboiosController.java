@@ -1,8 +1,8 @@
 package controllers;
 
-import com.so.tp.fx.Estacao;
+import com.so.tp.fx.Comboio;
+import com.so.tp.fx.Main;
 import com.so.tp.fx.PainelControlo;
-import com.so.tp.fx.Passageiro;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -10,18 +10,14 @@ import javafx.scene.control.cell.PropertyValueFactory;
 
 import java.io.IOException;
 
-public class EstacoesController {
-
+public class ComboiosController {
     @FXML
-    private TableView<Estacao> tblEstacoes;
-    private TableColumn<Estacao, Integer> colNumero;
-    private TableColumn<Estacao, Integer> colLotacao;
-    private TableColumn<Estacao, String> colNome;
+    private TableView<Comboio> tblComboio;
+    private TableColumn<Comboio, Integer> colNumero;
+    private TableColumn<Comboio, Integer> colLotacao;
 
     @FXML
     private TextField txtNumero;
-    @FXML
-    private TextField txtNome;
     @FXML
     private TextField txtLotacao;
     @FXML
@@ -36,62 +32,62 @@ public class EstacoesController {
     private Button btnNovo;
 
     public void initialize() throws IOException, ClassNotFoundException {
-
         colNumero = new TableColumn<>("Número");
         colNumero.setCellValueFactory(new PropertyValueFactory<>("numero"));
-        colNome = new TableColumn<>("Nome");
-        colNome.setCellValueFactory(new PropertyValueFactory<>("nome"));
         colLotacao = new TableColumn<>("Lotação");
         colLotacao.setCellValueFactory(new PropertyValueFactory<>("lotacao"));
 
         //Permitir a seleção de apenas uma linha da tabela
-        TableView.TableViewSelectionModel<Estacao> selectionModel =
-                tblEstacoes.getSelectionModel();
+        TableView.TableViewSelectionModel<Comboio> selectionModel =
+                tblComboio.getSelectionModel();
         selectionModel.setSelectionMode(
                 SelectionMode.SINGLE);
 
-        tblEstacoes.getColumns().addAll(colNumero, colNome, colLotacao);
+        tblComboio.getColumns().addAll(colNumero, colLotacao);
 
         getDataToTableView();
     }
 
     public void getDataToTableView() throws IOException, ClassNotFoundException {
-        PainelControlo.estacoes.clear();
+        PainelControlo.comboios.clear();
         PainelControlo.getDados();
         //adicionar dados à tabela
-        tblEstacoes.setItems(FXCollections.observableArrayList(PainelControlo.estacoes));
+        tblComboio.setItems(FXCollections.observableArrayList(PainelControlo.comboios));
     }
 
-    public void onRowSelect(){
+
+    Comboio selectedItem = null;
+
+    public void onRowSelect() {
         btnSave.setDisable(true);
         btnAtualizar.setDisable(false);
         btnEliminar.setDisable(false);
         btnNovo.setDisable(false);
 
-        if (tblEstacoes.getSelectionModel().getSelectedItem() != null) {
+        if (tblComboio.getSelectionModel().getSelectedItem() != null) {
             // Obtenha o item selecionado
-            Estacao selectedItem = tblEstacoes.getSelectionModel().getSelectedItem();
-            // Atualize os campos de entrada com os valores do 'item' selecionado
+            selectedItem = tblComboio.getSelectionModel().getSelectedItem();
+            // Atualize os campos de entrada com os valores do item selecionado
             txtNumero.setText(String.valueOf(selectedItem.getNumero()));
-            txtNome.setText(selectedItem.getNome());
             txtLotacao.setText(String.valueOf(selectedItem.getLotacao()));
+
+            //Main.comboiosParaPartir.add(selectedItem);
         }
     }
 
-    public void onNovoClick(){
+    public void onNovoClick() {
         btnSave.setDisable(false);
         btnAtualizar.setDisable(true);
         btnEliminar.setDisable(true);
         btnNovo.setDisable(true);
 
         txtNumero.setText("");
-        txtNome.setText("");
         txtLotacao.setText("");
     }
 
     public void onSaveClick() throws IOException, ClassNotFoundException {
         try {
-            PainelControlo.insertEstacoes(txtNome.getText(), Integer.parseInt(txtLotacao.getText()));
+            PainelControlo.insertComboios(Integer.parseInt(txtLotacao.getText()));
             getDataToTableView();
         } catch (Exception e) {
             lblAlerta.setText("Erro ao guardar os dados!");
@@ -100,19 +96,26 @@ public class EstacoesController {
 
     public void onUpdateClick() throws IOException, ClassNotFoundException {
         try {
-            PainelControlo.updateEstacoes(Integer.parseInt(txtNumero.getText()), txtNome.getText(), Integer.parseInt(txtLotacao.getText()));
             getDataToTableView();
-        } catch (Exception e){
+        } catch (Exception e) {
             lblAlerta.setText("Erro ao atualizar os dados!");
         }
     }
 
     public void onDeleteClick() throws IOException {
         try {
-            PainelControlo.deleteData(Integer.parseInt(txtNumero.getText()), "estacoes");
+            PainelControlo.deleteData(Integer.parseInt(txtNumero.getText()), "comboios");
             getDataToTableView();
-        } catch (Exception e){
+        } catch (Exception e) {
             lblAlerta.setText("Erro ao eliminar os dados!");
         }
+    }
+
+    public void onPartirClick() {
+        Main.comboiosParaPartir.add(selectedItem);
+//        for (Comboio comboio : Main.comboiosParaPartir) {
+//            System.out.println(comboio.getNumero());
+//        }
+//        System.out.println("\n");
     }
 }

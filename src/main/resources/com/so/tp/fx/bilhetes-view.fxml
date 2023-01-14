@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="565.0" prefWidth="726.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.BilhetesController">
+   <children>
+      <Label layoutX="243.0" layoutY="14.0" prefHeight="46.0" prefWidth="286.0" text="GERIR BILHETES">
+         <font>
+            <Font name="Eras Medium ITC" size="38.0" />
+         </font>
+      </Label>
+      <TableView fx:id="tblBilhetes" layoutX="15.0" layoutY="283.0" onMouseClicked="#onRowSelect" prefHeight="270.0" prefWidth="695.0" />
+      <TextField fx:id="txtNumero" disable="true" layoutX="218.0" layoutY="86.0" />
+      <Label layoutX="152.0" layoutY="89.0" text="Número" textOverrun="WORD_ELLIPSIS">
+         <font>
+            <Font name="Gill Sans MT" size="16.0" />
+         </font>
+      </Label>
+      <Button fx:id="btnSave" defaultButton="true" layoutX="408.0" layoutY="88.0" mnemonicParsing="false" onAction="#onSaveClick" prefHeight="26.0" prefWidth="62.0" text="Gravar" />
+      <Button fx:id="btnAtualizar" disable="true" layoutX="408.0" layoutY="122.0" mnemonicParsing="false" onAction="#onUpdateClick" text="Atualizar" />
+      <Button fx:id="btnEliminar" disable="true" layoutX="408.0" layoutY="155.0" mnemonicParsing="false" onAction="#onDeleteClick" prefHeight="26.0" prefWidth="62.0" text="Eliminar" />
+      <Button fx:id="btnNovo" disable="true" layoutX="480.0" layoutY="88.0" mnemonicParsing="false" onAction="#onNovoClick" prefHeight="94.0" prefWidth="79.0" text="Novo" />
+      <ComboBox fx:id="cbEntrada" layoutX="220.0" layoutY="200.0" prefWidth="150.0" />
+      <ComboBox fx:id="cbSaida" layoutX="219.0" layoutY="237.0" prefHeight="26.0" prefWidth="150.0" />
+      <Label layoutX="107.0" layoutY="203.0" text="Estação Entrada">
+         <font>
+            <Font name="Gill Sans MT" size="16.0" />
+         </font>
+      </Label>
+      <Label layoutX="124.0" layoutY="240.0" text="Estação Saída">
+         <font>
+            <Font name="Gill Sans MT" size="16.0" />
+         </font>
+      </Label>
+      <Label layoutX="174.0" layoutY="124.0" text="Linha">
+         <font>
+            <Font name="Gill Sans MT" size="16.0" />
+         </font>
+      </Label>
+      <ComboBox fx:id="cbLinha" layoutX="218.0" layoutY="123.0" onAction="#onLineChanged" onDragEntered="#onLineChanged" prefHeight="26.0" prefWidth="150.0" />
+      <Label layoutX="163.0" layoutY="165.0" text="Sentido">
+         <font>
+            <Font name="Gill Sans MT" size="16.0" />
+         </font>
+      </Label>
+      <ComboBox fx:id="cbSentido" layoutX="219.0" layoutY="163.0" prefHeight="26.0" prefWidth="150.0" />
+   </children>
+</AnchorPane>

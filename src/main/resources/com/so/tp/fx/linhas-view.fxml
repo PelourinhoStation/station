@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="565.0" prefWidth="726.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.LinhasController">
+   <children>
+      <Label layoutX="239.0" layoutY="34.0" prefHeight="46.0" prefWidth="247.0" text="GERIR LINHAS">
+         <font>
+            <Font name="Eras Medium ITC" size="38.0" />
+         </font>
+      </Label>
+      <TableView fx:id="tblLinha" layoutX="14.0" layoutY="222.0" onMouseClicked="#onRowSelect" prefHeight="334.0" prefWidth="698.0" />
+      <TextField fx:id="txtNumero" disable="true" layoutX="219.0" layoutY="125.0" />
+      <TextField fx:id="txtNome" layoutX="220.0" layoutY="166.0" />
+      <Label layoutX="153.0" layoutY="128.0" text="Número" textOverrun="WORD_ELLIPSIS">
+         <font>
+            <Font name="Gill Sans MT" size="16.0" />
+         </font>
+      </Label>
+      <Label layoutX="161.0" layoutY="169.0" text="Nome">
+         <font>
+            <Font name="Gill Sans MT" size="16.0" />
+         </font>
+      </Label>
+      <Button fx:id="btnSave" defaultButton="true" layoutX="409.0" layoutY="111.0" mnemonicParsing="false" onAction="#onSaveClick" prefHeight="26.0" prefWidth="62.0" text="Gravar" />
+      <Button fx:id="btnAtualizar" disable="true" layoutX="409.0" layoutY="145.0" mnemonicParsing="false" onAction="#onUpdateClick" text="Atualizar" />
+      <Button fx:id="btnEliminar" disable="true" layoutX="409.0" layoutY="178.0" mnemonicParsing="false" onAction="#onDeleteClick" prefHeight="26.0" prefWidth="62.0" text="Eliminar" />
+      <Button fx:id="btnNovo" disable="true" layoutX="481.0" layoutY="111.0" mnemonicParsing="false" onAction="#onNovoClick" prefHeight="94.0" prefWidth="79.0" text="Novo" />
+   </children>
+</AnchorPane>

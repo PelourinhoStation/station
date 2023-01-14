@@ -104,5 +104,81 @@ public class Passageiro {
 
         System.out.println("O passageiro " + passageiro.getNome() + " vai viajar por " + getNumEstacoesBilhete() + " estações.");
     }
+
+    public static class PassegeiroModel{
+        int numero;
+        String nome;
+        String estacaoEntrada;
+        String estacaoSaida;
+        String estacaoEntradP;
+        int idEstacaoEntrada;
+        int idBilhete;
+
+        public PassegeiroModel(int numero, String nome, String estacaoEntrada, String estacaoSaida, String estacaoEntradP, int idEstacaoEntrada, int idBilhete) {
+            this.numero = numero;
+            this.nome = nome;
+            this.estacaoEntrada = estacaoEntrada;
+            this.estacaoSaida = estacaoSaida;
+            this.estacaoEntradP = estacaoEntradP;
+            this.idEstacaoEntrada = idEstacaoEntrada;
+            this.idBilhete = idBilhete;
+        }
+
+        public int getNumero() {
+            return numero;
+        }
+
+        public void setNumero(int numero) {
+            this.numero = numero;
+        }
+
+        public String getNome() {
+            return nome;
+        }
+
+        public void setNome(String nome) {
+            this.nome = nome;
+        }
+
+        public String getEstacaoEntrada() {
+            return estacaoEntrada;
+        }
+
+        public void setEstacaoEntrada(String estacaoEntrada) {
+            this.estacaoEntrada = estacaoEntrada;
+        }
+
+        public String getEstacaoSaida() {
+            return estacaoSaida;
+        }
+
+        public void setEstacaoSaida(String estacaoSaida) {
+            this.estacaoSaida = estacaoSaida;
+        }
+
+        public String getEstacaoEntradP() {
+            return estacaoEntradP;
+        }
+
+        public void setEstacaoEntradP(String estacaoEntradP) {
+            this.estacaoEntradP = estacaoEntradP;
+        }
+
+        public int getIdEstacaoEntrada() {
+            return idEstacaoEntrada;
+        }
+
+        public void setIdEstacaoEntrada(int idEstacaoEntrada) {
+            this.idEstacaoEntrada = idEstacaoEntrada;
+        }
+
+        public int getIdBilhete() {
+            return idBilhete;
+        }
+
+        public void setIdBilhete(int idBilhete) {
+            this.idBilhete = idBilhete;
+        }
+    }
 }
 

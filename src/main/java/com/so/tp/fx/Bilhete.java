@@ -6,6 +6,7 @@ public class Bilhete {
     Estacao estacaoSaida;
     Linha linha;
     String sentido;
+
     public Bilhete(int numero, Estacao estacaoEntra, Estacao estacaoSaida, Linha linha, String sentido) {
         this.numero = numero;
         this.estacaoEntra = estacaoEntra;
@@ -55,8 +56,8 @@ public class Bilhete {
     }
 
     public boolean isValido(Passageiro passageiro, Comboio comboio) {
+        if (passageiro.getBilhete().getEstacaoEntra().getNome().equals(comboio.getEstacaoAtual().getNome())) {
 
-        if (passageiro.getBilhete().getEstacaoEntra().equals(comboio.getEstacaoAtual())) {
             if (passageiro.getBilhete().getSentido().equals(comboio.getHorarioAtual().getSentido())) {
                 return true;
             } else {
@@ -81,5 +82,92 @@ public class Bilhete {
 //                return false;
 //            }
 //        }
+    }
+
+    public static class ModelBilhete {
+        int numero;
+        int idEstacaoEntra;
+        String estacaoEntra;
+        int idEstacaoSaida;
+        String estacaoSaida;
+        int idLinha;
+        String nomeLinha;
+        String sentido;
+
+        public ModelBilhete(int numero, int idEstacaoEntra, String estacaoEntra, int idEstacaoSaida, String estacaoSaida, int idLinha, String nomeLinha, String sentido) {
+            this.numero = numero;
+            this.idEstacaoEntra = idEstacaoEntra;
+            this.estacaoEntra = estacaoEntra;
+            this.idEstacaoSaida = idEstacaoSaida;
+            this.estacaoSaida = estacaoSaida;
+            this.idLinha = idLinha;
+            this.nomeLinha = nomeLinha;
+            this.sentido = sentido;
+        }
+
+        public int getNumero() {
+            return numero;
+        }
+
+        public void setNumero(int numero) {
+            this.numero = numero;
+        }
+
+        public int getIdEstacaoEntra() {
+            return idEstacaoEntra;
+        }
+
+        public void setIdEstacaoEntra(int idEstacaoEntra) {
+            this.idEstacaoEntra = idEstacaoEntra;
+        }
+
+        public String getEstacaoEntra() {
+            return estacaoEntra;
+        }
+
+        public void setEstacaoEntra(String estacaoEntra) {
+            this.estacaoEntra = estacaoEntra;
+        }
+
+        public int getIdEstacaoSaida() {
+            return idEstacaoSaida;
+        }
+
+        public void setIdEstacaoSaida(int idEstacaoSaida) {
+            this.idEstacaoSaida = idEstacaoSaida;
+        }
+
+        public String getEstacaoSaida() {
+            return estacaoSaida;
+        }
+
+        public void setEstacaoSaida(String estacaoSaida) {
+            this.estacaoSaida = estacaoSaida;
+        }
+
+        public int getIdLinha() {
+            return idLinha;
+        }
+
+        public void setIdLinha(int idLinha) {
+            this.idLinha = idLinha;
+        }
+
+        public String getNomeLinha() {
+            return nomeLinha;
+        }
+
+        public void setNomeLinha(String linha) {
+            this.nomeLinha = linha;
+        }
+
+        public String getSentido() {
+            return sentido;
+        }
+
+        public void setSentido(String sentido) {
+            this.sentido = sentido;
+        }
+
     }
 }

@@ -6,13 +6,15 @@ import java.util.concurrent.Semaphore;
 
 public class Linha {
     private int numero;
+    String nome;
     private List<Estacao> estacoes;
     private Semaphore semaphore;
     private List<Comboio> trains;
 
-    public Linha(int numero, List<Estacao> estacoes) {
+    public Linha(int numero, String nome) {
         this.numero = numero;
-        this.estacoes = estacoes;
+        this.estacoes = null;
+        this.nome = nome;
         this.semaphore = new Semaphore(1);
         this.trains = new ArrayList<>();
     }
@@ -23,6 +25,14 @@ public class Linha {
 
     public void setNumero(int numero) {
         this.numero = numero;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
     }
 
     public List<Estacao> getEstacoes() {
@@ -65,40 +75,6 @@ public class Linha {
 
     public void setTrains(List<Comboio> trains) {
         this.trains = trains;
-    }
-
-    public boolean hasConflict() {
-        try {
-            semaphore.acquire();
-            return trains.size() > 1;
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } finally {
-            semaphore.release();
-        }
-        return false;
-    }
-
-    public void addTrain(Comboio comboio) {
-        try {
-            semaphore.acquire();
-            trains.add(comboio);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } finally {
-            semaphore.release();
-        }
-    }
-
-    public void removeTrain(Comboio comboio) {
-        try {
-            semaphore.acquire();
-            trains.remove(comboio);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } finally {
-            semaphore.release();
-        }
     }
 
 }

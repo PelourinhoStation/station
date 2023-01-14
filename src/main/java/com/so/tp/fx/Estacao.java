@@ -93,4 +93,71 @@ public class Estacao {
             semaforo.release();
         }
     }
+
+    public static class LinhasEstacoes {
+
+        int numero;
+        int numeroEstacao;
+        String nome;
+        int lotacao;
+        int idLinha;
+        String nomeLinha;
+
+        public LinhasEstacoes(int numero, int numeroEstacao, String nome, int lotacao, int idLinha, String nomeLinha) {
+            this.numero = numero;
+            this.numeroEstacao = numeroEstacao;
+            this.nome = nome;
+            this.lotacao = lotacao;
+            this.idLinha = idLinha;
+            this.nomeLinha = nomeLinha;
+        }
+
+        public int getNumero() {
+            return numero;
+        }
+
+        public void setNumero(int numero) {
+            this.numero = numero;
+        }
+
+        public int getNumeroEstacao() {
+            return numeroEstacao;
+        }
+
+        public void setNumeroEstacao(int numeroEstacao) {
+            this.numeroEstacao = numeroEstacao;
+        }
+
+        public String getNome() {
+            return nome;
+        }
+
+        public void setNome(String nome) {
+            this.nome = nome;
+        }
+
+        public int getLotacao() {
+            return lotacao;
+        }
+
+        public void setLotacao(int lotacao) {
+            this.lotacao = lotacao;
+        }
+
+        public int getIdLinha() {
+            return idLinha;
+        }
+
+        public void setIdLinha(int idLinha) {
+            this.idLinha = idLinha;
+        }
+
+        public String getNomeLinha() {
+            return nomeLinha;
+        }
+
+        public void setNomeLinha(String nomeLinha) {
+            this.nomeLinha = nomeLinha;
+        }
+    }
 }

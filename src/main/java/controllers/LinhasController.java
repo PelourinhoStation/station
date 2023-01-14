@@ -1,8 +1,9 @@
 package controllers;
 
-import com.so.tp.fx.Estacao;
+import com.so.tp.fx.Comboio;
+import com.so.tp.fx.Horario;
+import com.so.tp.fx.Linha;
 import com.so.tp.fx.PainelControlo;
-import com.so.tp.fx.Passageiro;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -10,20 +11,17 @@ import javafx.scene.control.cell.PropertyValueFactory;
 
 import java.io.IOException;
 
-public class EstacoesController {
+public class LinhasController {
 
     @FXML
-    private TableView<Estacao> tblEstacoes;
-    private TableColumn<Estacao, Integer> colNumero;
-    private TableColumn<Estacao, Integer> colLotacao;
-    private TableColumn<Estacao, String> colNome;
+    private TableView<Linha> tblLinha;
+    private TableColumn<Linha, Integer> colNumero;
+    private TableColumn<Linha, Integer> colNome;
 
     @FXML
     private TextField txtNumero;
     @FXML
     private TextField txtNome;
-    @FXML
-    private TextField txtLotacao;
     @FXML
     private Label lblAlerta;
     @FXML
@@ -36,30 +34,27 @@ public class EstacoesController {
     private Button btnNovo;
 
     public void initialize() throws IOException, ClassNotFoundException {
-
         colNumero = new TableColumn<>("Número");
         colNumero.setCellValueFactory(new PropertyValueFactory<>("numero"));
         colNome = new TableColumn<>("Nome");
         colNome.setCellValueFactory(new PropertyValueFactory<>("nome"));
-        colLotacao = new TableColumn<>("Lotação");
-        colLotacao.setCellValueFactory(new PropertyValueFactory<>("lotacao"));
 
         //Permitir a seleção de apenas uma linha da tabela
-        TableView.TableViewSelectionModel<Estacao> selectionModel =
-                tblEstacoes.getSelectionModel();
+        TableView.TableViewSelectionModel<Linha> selectionModel =
+                tblLinha.getSelectionModel();
         selectionModel.setSelectionMode(
                 SelectionMode.SINGLE);
 
-        tblEstacoes.getColumns().addAll(colNumero, colNome, colLotacao);
+        tblLinha.getColumns().addAll(colNumero, colNome);
 
         getDataToTableView();
     }
 
     public void getDataToTableView() throws IOException, ClassNotFoundException {
-        PainelControlo.estacoes.clear();
+        PainelControlo.linhas.clear();
         PainelControlo.getDados();
         //adicionar dados à tabela
-        tblEstacoes.setItems(FXCollections.observableArrayList(PainelControlo.estacoes));
+        tblLinha.setItems(FXCollections.observableArrayList(PainelControlo.linhas));
     }
 
     public void onRowSelect(){
@@ -68,13 +63,12 @@ public class EstacoesController {
         btnEliminar.setDisable(false);
         btnNovo.setDisable(false);
 
-        if (tblEstacoes.getSelectionModel().getSelectedItem() != null) {
+        if (tblLinha.getSelectionModel().getSelectedItem() != null) {
             // Obtenha o item selecionado
-            Estacao selectedItem = tblEstacoes.getSelectionModel().getSelectedItem();
+            Linha selectedItem = tblLinha.getSelectionModel().getSelectedItem();
             // Atualize os campos de entrada com os valores do 'item' selecionado
             txtNumero.setText(String.valueOf(selectedItem.getNumero()));
             txtNome.setText(selectedItem.getNome());
-            txtLotacao.setText(String.valueOf(selectedItem.getLotacao()));
         }
     }
 
@@ -86,12 +80,11 @@ public class EstacoesController {
 
         txtNumero.setText("");
         txtNome.setText("");
-        txtLotacao.setText("");
     }
 
     public void onSaveClick() throws IOException, ClassNotFoundException {
         try {
-            PainelControlo.insertEstacoes(txtNome.getText(), Integer.parseInt(txtLotacao.getText()));
+            PainelControlo.insertLinhas(txtNome.getText());
             getDataToTableView();
         } catch (Exception e) {
             lblAlerta.setText("Erro ao guardar os dados!");
@@ -100,7 +93,7 @@ public class EstacoesController {
 
     public void onUpdateClick() throws IOException, ClassNotFoundException {
         try {
-            PainelControlo.updateEstacoes(Integer.parseInt(txtNumero.getText()), txtNome.getText(), Integer.parseInt(txtLotacao.getText()));
+            PainelControlo.updateLinhas(Integer.parseInt(txtNumero.getText()), txtNome.getText());
             getDataToTableView();
         } catch (Exception e){
             lblAlerta.setText("Erro ao atualizar os dados!");
@@ -109,10 +102,11 @@ public class EstacoesController {
 
     public void onDeleteClick() throws IOException {
         try {
-            PainelControlo.deleteData(Integer.parseInt(txtNumero.getText()), "estacoes");
+            PainelControlo.deleteData(Integer.parseInt(txtNumero.getText()), "linhas");
             getDataToTableView();
-        } catch (Exception e){
+        } catch (Exception e) {
             lblAlerta.setText("Erro ao eliminar os dados!");
         }
     }
+
 }

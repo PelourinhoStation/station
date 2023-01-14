@@ -7,35 +7,36 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="485.0" prefWidth="871.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.EstacoesController">
+<AnchorPane prefHeight="565.0" prefWidth="726.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.EstacoesController">
    <children>
-      <Label layoutX="272.0" layoutY="19.0" text="GERIR ESTAÇÕES" AnchorPane.leftAnchor="272.0" AnchorPane.rightAnchor="364.6" AnchorPane.topAnchor="19.0">
+      <Label layoutX="206.0" layoutY="17.0" prefHeight="46.0" prefWidth="315.0" text="GERIR ESTAÇÕES" AnchorPane.leftAnchor="206.0" AnchorPane.rightAnchor="205.0" AnchorPane.topAnchor="17.0">
          <font>
-            <Font size="31.0" />
+            <Font name="Eras Medium ITC" size="38.0" />
          </font>
       </Label>
-      <TableView fx:id="tblEstacao" layoutX="623.0" layoutY="19.0" onMouseClicked="#onRowSelect" prefHeight="448.0" prefWidth="234.0" AnchorPane.bottomAnchor="18.0" AnchorPane.leftAnchor="623.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="19.0" />
-      <TextField fx:id="txtNumero" layoutX="101.0" layoutY="108.0" />
-      <TextField fx:id="txtNome" layoutX="101.0" layoutY="142.0" />
-      <TextField fx:id="txtLotacao" layoutX="101.0" layoutY="176.0" />
-      <Label layoutX="35.0" layoutY="111.0" text="Número">
-         <font>
-            <Font name="Gill Sans MT" size="16.0" />
-         </font>
-      </Label>
-      <Label layoutX="47.0" layoutY="145.0" text="Nome">
+      <TableView fx:id="tblEstacoes" layoutX="14.0" layoutY="215.0" onMouseClicked="#onRowSelect" prefHeight="334.0" prefWidth="698.0" AnchorPane.bottomAnchor="16.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="215.0" />
+      <TextField fx:id="txtNumero" disable="true" layoutX="199.0" layoutY="94.0" />
+      <TextField fx:id="txtNome" layoutX="199.0" layoutY="128.0" />
+      <TextField fx:id="txtLotacao" layoutX="199.0" layoutY="162.0" />
+      <Label layoutX="133.0" layoutY="97.0" text="Número" textOverrun="WORD_ELLIPSIS">
          <font>
             <Font name="Gill Sans MT" size="16.0" />
          </font>
       </Label>
-      <Label layoutX="42.0" layoutY="179.0" text="Lotação">
+      <Label layoutX="145.0" layoutY="131.0" text="Nome">
          <font>
             <Font name="Gill Sans MT" size="16.0" />
          </font>
       </Label>
-      <Button fx:id="btnSave" layoutX="63.0" layoutY="243.0" mnemonicParsing="false" onAction="#onSaveClick" text="Gravar" />
+      <Label layoutX="140.0" layoutY="165.0" text="Lotação">
+         <font>
+            <Font name="Gill Sans MT" size="16.0" />
+         </font>
+      </Label>
+      <Button fx:id="btnSave" defaultButton="true" layoutX="364.0" layoutY="94.0" mnemonicParsing="false" onAction="#onSaveClick" prefHeight="26.0" prefWidth="62.0" text="Gravar" />
       <Label fx:id="lblAlerta" layoutX="151.0" layoutY="211.0" />
-      <Button fx:id="btnAtualizar" layoutX="128.0" layoutY="243.0" mnemonicParsing="false" onAction="#onUpdateClick" text="Atualizar" />
-      <Button fx:id="btnEliminar" layoutX="209.0" layoutY="243.0" mnemonicParsing="false" onAction="#onDeleteClick" text="Eliminar" />
+      <Button fx:id="btnAtualizar" disable="true" layoutX="364.0" layoutY="128.0" mnemonicParsing="false" onAction="#onUpdateClick" text="Atualizar" />
+      <Button fx:id="btnEliminar" disable="true" layoutX="364.0" layoutY="161.0" mnemonicParsing="false" onAction="#onDeleteClick" prefHeight="26.0" prefWidth="62.0" text="Eliminar" />
+      <Button fx:id="btnNovo" disable="true" layoutX="436.0" layoutY="94.0" mnemonicParsing="false" onAction="#onNovoClick" prefHeight="94.0" prefWidth="79.0" text="Novo" />
    </children>
 </AnchorPane>

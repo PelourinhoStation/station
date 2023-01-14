@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+
+<AnchorPane prefHeight="565.0" prefWidth="726.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.horariosLinhasController">
+   <children>
+      <AnchorPane layoutX="10.0" layoutY="10.0" prefHeight="565.0" prefWidth="726.0">
+         <children>
+            <Label layoutX="111.0" layoutY="23.0" prefHeight="46.0" prefWidth="526.0" text="ASSOCIAR LINHAS/HORÁRIOS">
+               <font>
+                  <Font name="Eras Medium ITC" size="38.0" />
+               </font>
+            </Label>
+            <TableView fx:id="tblLinhasHorarios" layoutX="14.0" layoutY="205.0" onMouseClicked="#onRowSelect" prefHeight="350.0" prefWidth="698.0" />
+            <Label layoutX="111.0" layoutY="105.0" prefHeight="19.0" prefWidth="38.0" text="Linha" textOverrun="WORD_ELLIPSIS">
+               <font>
+                  <Font name="Gill Sans MT" size="16.0" />
+               </font>
+            </Label>
+            <Button fx:id="btnSave" defaultButton="true" layoutX="452.0" layoutY="89.0" mnemonicParsing="false" onAction="#onSaveClick" prefHeight="26.0" prefWidth="62.0" text="Gravar" />
+            <Label fx:id="lblAlerta" layoutX="161.0" layoutY="221.0" />
+            <Button fx:id="btnAtualizar" disable="true" layoutX="452.0" layoutY="123.0" mnemonicParsing="false" onAction="#onUpdateClick" text="Atualizar" />
+            <Button fx:id="btnEliminar" disable="true" layoutX="452.0" layoutY="156.0" mnemonicParsing="false" onAction="#onDeleteClick" prefHeight="26.0" prefWidth="62.0" text="Eliminar" />
+            <Button fx:id="btnNovo" disable="true" layoutX="524.0" layoutY="89.0" mnemonicParsing="false" onAction="#onNovoClick" prefHeight="94.0" prefWidth="79.0" text="Novo" />
+            <Label layoutX="92.0" layoutY="146.0" prefHeight="19.0" prefWidth="56.0" text="Horário" textOverrun="WORD_ELLIPSIS">
+               <font>
+                  <Font name="Gill Sans MT" size="16.0" />
+               </font>
+            </Label>
+            <ComboBox fx:id="cbLinha" layoutX="154.0" layoutY="102.0" prefWidth="150.0" />
+            <ComboBox fx:id="cbHorario" layoutX="155.0" layoutY="143.0" prefHeight="26.0" prefWidth="230.0" />
+         </children>
+      </AnchorPane>
+   </children>
+</AnchorPane>

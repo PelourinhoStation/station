@@ -1,8 +1,7 @@
 package controllers;
 
-import com.so.tp.fx.Estacao;
+import com.so.tp.fx.Horario;
 import com.so.tp.fx.PainelControlo;
-import com.so.tp.fx.Passageiro;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -10,20 +9,22 @@ import javafx.scene.control.cell.PropertyValueFactory;
 
 import java.io.IOException;
 
-public class EstacoesController {
-
+public class HorariosController {
     @FXML
-    private TableView<Estacao> tblEstacoes;
-    private TableColumn<Estacao, Integer> colNumero;
-    private TableColumn<Estacao, Integer> colLotacao;
-    private TableColumn<Estacao, String> colNome;
+    private TableView<Horario> tblHorarios;
+    private TableColumn<Horario, Integer> colNumero;
+    private TableColumn<Horario, Integer> colPartida;
+    private TableColumn<Horario, String> colChegada;
+    private TableColumn<Horario, String> colSentido;
 
     @FXML
     private TextField txtNumero;
     @FXML
-    private TextField txtNome;
+    private TextField txtPartida;
     @FXML
-    private TextField txtLotacao;
+    private TextField txtChegada;
+    @FXML
+    private TextField txtSentido;
     @FXML
     private Label lblAlerta;
     @FXML
@@ -39,27 +40,29 @@ public class EstacoesController {
 
         colNumero = new TableColumn<>("Número");
         colNumero.setCellValueFactory(new PropertyValueFactory<>("numero"));
-        colNome = new TableColumn<>("Nome");
-        colNome.setCellValueFactory(new PropertyValueFactory<>("nome"));
-        colLotacao = new TableColumn<>("Lotação");
-        colLotacao.setCellValueFactory(new PropertyValueFactory<>("lotacao"));
+        colPartida = new TableColumn<>("Hora de partida");
+        colPartida.setCellValueFactory(new PropertyValueFactory<>("horaPartida"));
+        colChegada = new TableColumn<>("Hora de chegada");
+        colChegada.setCellValueFactory(new PropertyValueFactory<>("horaChegada"));
+        colSentido = new TableColumn<>("Sentido");
+        colSentido.setCellValueFactory(new PropertyValueFactory<>("sentido"));
 
         //Permitir a seleção de apenas uma linha da tabela
-        TableView.TableViewSelectionModel<Estacao> selectionModel =
-                tblEstacoes.getSelectionModel();
+        TableView.TableViewSelectionModel<Horario> selectionModel =
+                tblHorarios.getSelectionModel();
         selectionModel.setSelectionMode(
                 SelectionMode.SINGLE);
 
-        tblEstacoes.getColumns().addAll(colNumero, colNome, colLotacao);
+        tblHorarios.getColumns().addAll(colNumero, colPartida, colChegada, colSentido);
 
         getDataToTableView();
     }
 
     public void getDataToTableView() throws IOException, ClassNotFoundException {
-        PainelControlo.estacoes.clear();
+        PainelControlo.horarios.clear();
         PainelControlo.getDados();
         //adicionar dados à tabela
-        tblEstacoes.setItems(FXCollections.observableArrayList(PainelControlo.estacoes));
+        tblHorarios.setItems(FXCollections.observableArrayList(PainelControlo.horarios));
     }
 
     public void onRowSelect(){
@@ -68,13 +71,14 @@ public class EstacoesController {
         btnEliminar.setDisable(false);
         btnNovo.setDisable(false);
 
-        if (tblEstacoes.getSelectionModel().getSelectedItem() != null) {
+        if (tblHorarios.getSelectionModel().getSelectedItem() != null) {
             // Obtenha o item selecionado
-            Estacao selectedItem = tblEstacoes.getSelectionModel().getSelectedItem();
+            Horario selectedItem = tblHorarios.getSelectionModel().getSelectedItem();
             // Atualize os campos de entrada com os valores do 'item' selecionado
             txtNumero.setText(String.valueOf(selectedItem.getNumero()));
-            txtNome.setText(selectedItem.getNome());
-            txtLotacao.setText(String.valueOf(selectedItem.getLotacao()));
+            txtChegada.setText(selectedItem.getHoraChegada());
+            txtPartida.setText(selectedItem.getHoraPartida());
+            txtSentido.setText(selectedItem.getSentido());
         }
     }
 
@@ -85,13 +89,14 @@ public class EstacoesController {
         btnNovo.setDisable(true);
 
         txtNumero.setText("");
-        txtNome.setText("");
-        txtLotacao.setText("");
+        txtChegada.setText("");
+        txtPartida.setText("");
+        txtSentido.setText("");
     }
 
     public void onSaveClick() throws IOException, ClassNotFoundException {
         try {
-            PainelControlo.insertEstacoes(txtNome.getText(), Integer.parseInt(txtLotacao.getText()));
+            PainelControlo.insertHorarios(txtPartida.getText(), txtChegada.getText(), txtSentido.getText());
             getDataToTableView();
         } catch (Exception e) {
             lblAlerta.setText("Erro ao guardar os dados!");
@@ -100,7 +105,7 @@ public class EstacoesController {
 
     public void onUpdateClick() throws IOException, ClassNotFoundException {
         try {
-            PainelControlo.updateEstacoes(Integer.parseInt(txtNumero.getText()), txtNome.getText(), Integer.parseInt(txtLotacao.getText()));
+            PainelControlo.updateHorarios(Integer.parseInt(txtNumero.getText()), txtPartida.getText(), txtChegada.getText(), txtSentido.getText());
             getDataToTableView();
         } catch (Exception e){
             lblAlerta.setText("Erro ao atualizar os dados!");
@@ -109,9 +114,9 @@ public class EstacoesController {
 
     public void onDeleteClick() throws IOException {
         try {
-            PainelControlo.deleteData(Integer.parseInt(txtNumero.getText()), "estacoes");
+            PainelControlo.deleteData(Integer.parseInt(txtNumero.getText()), "horarios");
             getDataToTableView();
-        } catch (Exception e){
+        } catch (Exception e) {
             lblAlerta.setText("Erro ao eliminar os dados!");
         }
     }

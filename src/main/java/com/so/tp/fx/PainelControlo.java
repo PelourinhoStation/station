@@ -1,60 +1,88 @@
 package com.so.tp.fx;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.sql.*;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 public class PainelControlo {
 
-    public static void getDados() throws IOException, ClassNotFoundException{
+    // Cria a conexão com a base de dados local
+    public static String url = "jdbc:mysql://localhost/station";
+    public static String username = "root";
+    public static String password = "";
 
-        List<Estacao> estacoesLinhaPorto1 = new LinkedList<>();
-        List<Estacao> estacoesLinhaPorto2 = new LinkedList<>();
-        List<Estacao> estacoesLinhaPorto3 = new LinkedList<>();
+    // Cria a conexão com a base de dados online
+    public static String urlOnline = "jdbc:mysql://db4free.net/so_station";
+    public static String usernameOnline = "so_user";
+    public static String passwordOnline = "sistemasoperativos";
 
-        Map<Integer, Linha> linhas = new HashMap<>();
+    // estruturas para armazenar dados
+    public static ObservableList<Estacao> estacoes = FXCollections.observableArrayList();
+    public static ObservableList<Comboio> comboios = FXCollections.observableArrayList();
 
-        List<Horario> horariosLinhaPorto1 = new LinkedList<>();
-        List<Horario> horariosLinhaPorto2 = new LinkedList<>();
-        List<Horario> horariosLinhaPorto3 = new LinkedList<>();
+    public static ObservableList<Linha> linhas = FXCollections.observableArrayList();
+    public static ObservableList<Estacao.LinhasEstacoes> linhasEstacoes = FXCollections.observableArrayList();
+    public static ObservableList<Horario> horarios = FXCollections.observableArrayList();
+    public static ObservableList<Horario.HorariosLinhas> horariosLinhas = FXCollections.observableArrayList();
+    public static ObservableList<Bilhete.ModelBilhete> bilhetes = FXCollections.observableArrayList();
+    public static ObservableList<Passageiro.PassegeiroModel> passageiros = FXCollections.observableArrayList();
 
+    public static void getDados() throws IOException, ClassNotFoundException {
         try {
             // Carregue o driver JDBC
             Class.forName("com.mysql.cj.jdbc.Driver");
 
-            // Crie a conexão com a base de dados
-            String url = "jdbc:mysql://localhost/station";
-            String username = "root";
-            String password = "";
             Connection connection = DriverManager.getConnection(url, username, password);
+            //Connection connection = DriverManager.getConnection(urlOnline, usernameOnline, passwordOnline);
+
+            // get comboios
+            try {
+                comboios.clear();
+                // Crie a consulta SQL para selecionar os dados das estações
+                String sql = "SELECT * FROM comboios";
+                Statement stmt = connection.createStatement();
+                ResultSet rs = stmt.executeQuery(sql);
+
+                while (rs.next()) {
+                    int numero = rs.getInt("numero");
+                    int lotacao = rs.getInt("lotacao");
+
+                    Comboio comboio = new Comboio(numero, lotacao);
+                    comboios.add(comboio);
+                    Main.comboios.put(numero, comboio);
+                }
+                stmt.close();
+                rs.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            // fim get comboios
 
             // get estacoes
             try {
+                estacoes.clear();
                 // Crie a consulta SQL para selecionar os dados das estações
-                String sql = "SELECT estacoes.numero, estacoes.nome, estacoes.lotacao, linhas.nome as nomeLinha FROM estacoes, linhas_estacoes, linhas WHERE estacoes.numero = linhas_estacoes.id_estacao AND linhas.numero = linhas_estacoes.id_linha";
+                String sql = "SELECT * FROM estacoes";
                 Statement stmt = connection.createStatement();
                 ResultSet rs = stmt.executeQuery(sql);
 
                 while (rs.next()) {
                     int numero = rs.getInt("numero");
                     String nome = rs.getString("nome");
-                    String nomeLinha = rs.getString("nomeLinha");
                     int lotacao = rs.getInt("lotacao");
-                    Estacao estacao = new Estacao(numero, nome, lotacao);
 
-                    switch (nomeLinha) {
-                        case "Porto_1" -> estacoesLinhaPorto1.add(estacao);
-                        case "Porto_2" -> estacoesLinhaPorto2.add(estacao);
-                        case "Porto_3" -> estacoesLinhaPorto3.add(estacao);
-                    }
+                    Estacao estacao = new Estacao(numero, nome, lotacao);
+                    estacoes.add(estacao);
+                    Main.estacoes.put(numero, estacao);
                 }
                 stmt.close();
                 rs.close();
@@ -65,6 +93,8 @@ public class PainelControlo {
 
             // get linhas
             try {
+                linhas.clear();
+                Main.linhas.clear();
                 // Crie a consulta SQL para selecionar os dados das estações
                 String sql = "SELECT * FROM `linhas`";
                 Statement stmt = connection.createStatement();
@@ -73,18 +103,9 @@ public class PainelControlo {
                 while (rs.next()) {
                     int numero = rs.getInt("numero");
                     String nome = rs.getString("nome");
-
-                    if (nome.equals("Porto_1")) {
-                        Linha linha = new Linha(numero, estacoesLinhaPorto1);
-                        linhas.put(numero, linha);
-                    } else if (nome.equals("Porto_2")) {
-                        Linha linha = new Linha(numero, estacoesLinhaPorto2);
-                        linhas.put(numero, linha);
-                    } else if (nome.equals("Porto_3")) {
-                        Linha linha = new Linha(numero, estacoesLinhaPorto3);
-                        linhas.put(numero, linha);
-                    }
-
+                    Linha linha = new Linha(numero, nome);
+                    linhas.add(linha);
+                    Main.linhas.put(numero, linha);
                 }
                 stmt.close();
                 rs.close();
@@ -93,27 +114,113 @@ public class PainelControlo {
             }
             // fim get linhas
 
-            // get horarios
+            // get linhas - estacoes
             try {
+                linhasEstacoes.clear();
+                Main.estacoesLinhaPorto1.clear();
+                Main.estacoesLinhaPorto2.clear();
+                Main.estacoesLinhaPorto3.clear();
                 // Crie a consulta SQL para selecionar os dados das estações
-                String sql = "SELECT horarios.numero, horarios.sentido, horarios.horaPartida, horarios.horaChegada, linhas.numero AS idLinha , linhas.nome AS nomeLinha FROM horarios, linhas WHERE horarios.id_linha = linhas.numero";
+                String sql = "SELECT linhas_estacoes.numero, estacoes.numero as numeroEstacao, estacoes.nome, estacoes.lotacao, linhas.numero AS idLinha, linhas.nome AS nomeLinha FROM linhas_estacoes JOIN linhas ON linhas_estacoes.id_linha = linhas.numero JOIN estacoes ON linhas_estacoes.id_estacao = estacoes.numero";
                 Statement stmt = connection.createStatement();
                 ResultSet rs = stmt.executeQuery(sql);
 
                 while (rs.next()) {
                     int numero = rs.getInt("numero");
-                    String sentido = rs.getString("sentido");
+                    int numeroEstacao = rs.getInt("numeroEstacao");
+                    String nome = rs.getString("nome");
+                    int lotacao = rs.getInt("lotacao");
+                    int idLinha = rs.getInt("idLinha");
                     String nomeLinha = rs.getString("nomeLinha");
+
+                    Estacao.LinhasEstacoes linhaEstacao = new Estacao.LinhasEstacoes(numero, numeroEstacao, nome, lotacao, idLinha, nomeLinha);
+                    linhasEstacoes.add(linhaEstacao);
+
+                    switch (idLinha) {
+                        case 1:
+                            Main.estacoesLinhaPorto1.add(Main.estacoes.get(numero));
+                            Main.linhas.get(idLinha).setEstacoes(Main.estacoesLinhaPorto1);
+                            break;
+                        case 2:
+                            Main.estacoesLinhaPorto2.add(Main.estacoes.get(numero));
+                            Main.linhas.get(idLinha).setEstacoes(Main.estacoesLinhaPorto2);
+                            break;
+                        case 3:
+                            Main.estacoesLinhaPorto3.add(Main.estacoes.get(numero));
+                            Main.linhas.get(idLinha).setEstacoes(Main.estacoesLinhaPorto3);
+                            break;
+                    }
+                }
+                stmt.close();
+                rs.close();
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            // fim get linhas - estacoes
+
+            // get horarios
+            try {
+                horarios.clear();
+                Main.horarios.clear();
+                Main.horariosLinhaPorto1.clear();
+                // Crie a consulta SQL para selecionar os dados das estações
+                String sql = "SELECT * FROM horarios";
+                Statement stmt = connection.createStatement();
+                ResultSet rs = stmt.executeQuery(sql);
+
+                while (rs.next()) {
+                    int numero = rs.getInt("numero");
+                    int idComboio = rs.getInt("id_comboio");
+                    String sentido = rs.getString("sentido");
                     String horaPartida = rs.getString("horaPartida");
                     String horaChegada = rs.getString("horaChegada");
-                    int idLinha = rs.getInt("idLinha");
 
-                    Horario horario = new Horario(horaPartida, horaChegada, linhas.get(idLinha), sentido);
+                    Horario horario = new Horario(numero, horaPartida, horaChegada, sentido, idComboio);
+                    horarios.add(horario);
+                    Main.horarios.put(numero, horario);
 
-                    switch (nomeLinha) {
-                        case "Porto_1" -> horariosLinhaPorto1.add(horario);
-                        case "Porto_2" -> horariosLinhaPorto2.add(horario);
-                        case "Porto_3" -> horariosLinhaPorto3.add(horario);
+                    comboios.get(idComboio-1).setHorarios(horario);
+                    comboios.get(idComboio-1).setPassageiros(Main.passageiros);
+
+                }
+                stmt.close();
+                rs.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            // get horarios - linhas
+            try {
+                horariosLinhas.clear();
+                // Crie a consulta SQL para selecionar os dados das estações
+                String sql = "SELECT horarios_linhas.numero, horarios.numero AS nHorario, horarios.horaPartida, horarios.horaChegada, linhas.numero AS nLinha, linhas.nome, horarios.sentido FROM horarios, linhas, horarios_linhas WHERE horarios.numero = horarios_linhas.id_horario AND linhas.numero = horarios_linhas.id_linha";
+                Statement stmt = connection.createStatement();
+                ResultSet rs = stmt.executeQuery(sql);
+
+                while (rs.next()) {
+                    int numero = rs.getInt("numero");
+                    int nHorario = rs.getInt("nHorario");
+                    int nLinha = rs.getInt("nLinha");
+                    String nomeLinha = rs.getString("nome");
+                    String horaPartida = rs.getString("horaPartida");
+                    String horaChegada = rs.getString("horaChegada");
+                    String sentido = rs.getString("sentido");
+
+                    Horario.HorariosLinhas horarioLinha = new Horario.HorariosLinhas(numero, nHorario, nLinha, horaChegada, horaPartida, sentido, nomeLinha);
+                    horariosLinhas.add(horarioLinha);
+                    Main.horarios.get(nHorario).setLinha(Main.linhas.get(nLinha));
+
+                    switch (nLinha){
+                        case 1:
+                            Main.horariosLinhaPorto1.add(Main.horarios.get(nHorario));
+                            break;
+                        case 2:
+                            Main.horariosLinhaPorto2.add(Main.horarios.get(nHorario));
+                            break;
+                        case 3:
+                            Main.horariosLinhaPorto3.add(Main.horarios.get(nHorario));
+                            break;
                     }
 
                 }
@@ -122,7 +229,66 @@ public class PainelControlo {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            // fim get horarios
+            // fim get horarios - linhas
+
+            // get bilhetes
+            try {
+                bilhetes.clear();
+                // Crie a consulta SQL para selecionar os dados das estações
+                String sql = "SELECT bilhetes.numero, bilhetes.estacaoEntrada AS idEstacaoEntrada, estacaoEntrada.nome AS estacaoEntrada, bilhetes.estacaoSaida AS idEstacaoSaida, estacaoSaida.nome AS estacaoSaida, bilhetes.idLinha, linhas.nome AS nomeLinha, sentido FROM bilhetes JOIN estacoes AS estacaoEntrada ON bilhetes.estacaoEntrada = estacaoEntrada.numero JOIN estacoes AS estacaoSaida ON bilhetes.estacaoSaida = estacaoSaida.numero JOIN linhas ON bilhetes.idLinha = linhas.numero";
+                Statement stmt = connection.createStatement();
+                ResultSet rs = stmt.executeQuery(sql);
+
+                while (rs.next()) {
+                    int numero = rs.getInt("numero");
+                    int idEstacaoEntrada = rs.getInt("idEstacaoEntrada");
+                    String estacaoEntrada = rs.getString("estacaoEntrada");
+                    int idEstacaoSaida = rs.getInt("idEstacaoSaida");
+                    String estacaoSaida = rs.getString("estacaoSaida");
+                    int idLinha = rs.getInt("idLinha");
+                    String sentido = rs.getString("sentido");
+                    String nomeLinha = rs.getString("nomeLinha");
+
+                    Bilhete bilhete = new Bilhete(numero, Main.estacoes.get(idEstacaoEntrada), Main.estacoes.get(idEstacaoSaida), Main.linhas.get(idLinha), sentido);
+                    Bilhete.ModelBilhete bilheteModel = new Bilhete.ModelBilhete(numero, idEstacaoEntrada, estacaoEntrada, idEstacaoSaida, estacaoSaida, idLinha, nomeLinha, sentido);
+                    bilhetes.add(bilheteModel);
+                    Main.bilhetes.put(numero, bilhete);
+                }
+                stmt.close();
+                rs.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            // fim get bilhetes
+
+            // get passageiros
+            try {
+                passageiros.clear();
+                // Crie a consulta SQL para selecionar os dados das estações
+                String sql = "SELECT passageiros.numero, passageiros.nome, estacaoEntrada.nome AS estacaoEntrada, estacaoSaida.nome as estacaoSaida, estacoes.nome as estacaoEntradaP, passageiros.idBilhete, passageiros.idEstacaoEntrada FROM bilhetes JOIN estacoes AS estacaoEntrada ON bilhetes.estacaoEntrada = estacaoEntrada.numero JOIN estacoes AS estacaoSaida ON bilhetes.estacaoSaida = estacaoSaida.numero JOIN passageiros ON passageiros.idBilhete = bilhetes.numero JOIN estacoes ON passageiros.idEstacaoEntrada = estacoes.numero";
+                Statement stmt = connection.createStatement();
+                ResultSet rs = stmt.executeQuery(sql);
+
+                while (rs.next()) {
+                    int numero = rs.getInt("numero");
+                    String nome = rs.getString("nome");
+                    String estacaoEntrada = rs.getString("estacaoEntrada");
+                    String estacaoSaida = rs.getString("estacaoSaida");
+                    String estacaoEntradP = rs.getString("estacaoEntradaP");
+                    int idEstacaoEntrada = rs.getInt("idEstacaoEntrada");
+                    int idBilhete = rs.getInt("idBilhete");
+
+                    Passageiro passageiro = new Passageiro(numero, nome, Main.bilhetes.get(idBilhete), Main.estacoes.get(idEstacaoEntrada));
+                    Passageiro.PassegeiroModel passageiroModel = new Passageiro.PassegeiroModel(numero, nome, estacaoEntrada, estacaoSaida, estacaoEntradP, idEstacaoEntrada, idBilhete);
+                    passageiros.add(passageiroModel);
+                    Main.passageiros.add(passageiro);
+                }
+                stmt.close();
+                rs.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            // fim get passageiros
 
             // Feche a conexão com a base de dados
             connection.close();
@@ -130,93 +296,371 @@ public class PainelControlo {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        //fim get estacoes
 
     }
 
-    public static Estacao[] estacoes = new Estacao[100];
-
-    public static void criaEstacoes() throws IOException {
-        File file = new File("estacoes.txt");
-        if (file.exists()) {
-            BufferedReader br = new BufferedReader(new FileReader(file));
-            String st;
-            int i = 0;
-            while ((st = br.readLine()) != null) {
-                String[] estacao = st.split(", ");
-                //estacoes[i] = new Estacao(Integer.parseInt(estacao[0]), Integer.parseInt(estacao[2]), estacao[1]);
-                i++;
-            }
+    public static boolean insertEstacoes(String nome, int lotacao) {
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection connection = DriverManager.getConnection(url, username, password);
+            String sql = "INSERT INTO estacoes (nome, lotacao) VALUES (?, ?)";
+            PreparedStatement stmt = connection.prepareStatement(sql);
+            stmt.setString(1, nome);
+            stmt.setInt(2, lotacao);
+            stmt.executeUpdate();
+            stmt.close();
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
         }
     }
 
-    //guardar dados de comboios num ficheiro de texto
-    public static void guardarEstacoes(Estacao estacao) {
-        try (FileWriter fw = new FileWriter("estacoes.txt", true);
-             BufferedWriter bw = new BufferedWriter(fw);
-             PrintWriter out = new PrintWriter(bw)) {
-
-            out.println(estacao.getNumero() + ", " + estacao.getNome() + ", " + estacao.getLotacao());
-
-            if (!out.checkError()) {
-                System.out.printf("Sucesso\n");
-                criaEstacoes();
-            } else {
-                System.out.printf("Erro\n");
-            }
-        } catch (IOException e) {
-            System.out.printf(e.toString());
+    public static void updateEstacoes(int numero, String nome, int lotacao) {
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection connection = DriverManager.getConnection(url, username, password);
+            String sql = "UPDATE estacoes SET nome = ?, lotacao = ? WHERE numero = ?";
+            PreparedStatement stmt = connection.prepareStatement(sql);
+            stmt.setString(1, nome);
+            stmt.setInt(2, lotacao);
+            stmt.setInt(3, numero);
+            stmt.executeUpdate();
+            stmt.close();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
-    //guardar troços num ficheiro de texto
-    public static void guardarTrocos(Linha linha) {
-        try (FileWriter fw = new FileWriter("horario.txt", true);
-             BufferedWriter bw = new BufferedWriter(fw);
-             PrintWriter out = new PrintWriter(bw)) {
-
-            //out.println(linha.getNumero() + ", " + linha.getEstacao1().getNome() + ", " + linha.getEstacao2().getNome() + ", " + linha.getSentido());
-
-            System.out.printf("Sucesso\n");
-        } catch (IOException e) {
-            System.out.printf(e.toString());
+    public static boolean insertLinhas(String nome) {
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection connection = DriverManager.getConnection(url, username, password);
+            String sql = "INSERT INTO linhas (nome) VALUES (?)";
+            PreparedStatement stmt = connection.prepareStatement(sql);
+            stmt.setString(1, nome);
+            stmt.executeUpdate();
+            stmt.close();
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
         }
     }
 
-    //guardar horários num ficheiro de texto
-    public static void guardarHorarios(Horario horario) {
-        try (FileWriter fw = new FileWriter("horario.txt", true);
-             BufferedWriter bw = new BufferedWriter(fw);
-             PrintWriter out = new PrintWriter(bw)) {
-
-            //out.println(horario.getHoraPartida() + ", " + horario.getHoraChegada() + ", " + horario.getTroco().getNumero());
-
-            System.out.printf("Sucesso\n");
-        } catch (IOException e) {
-            System.out.printf(e.toString());
+    public static void updateLinhas(int numero, String nome) {
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection connection = DriverManager.getConnection(url, username, password);
+            String sql = "UPDATE linhas SET nome = ? WHERE numero = ?";
+            PreparedStatement stmt = connection.prepareStatement(sql);
+            stmt.setString(1, nome);
+            stmt.setInt(2, numero);
+            stmt.executeUpdate();
+            stmt.close();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
-    //guardar dados de comboios num ficheiro de texto
-    public static void guardarComboios(Comboio comboio) {
-        try (FileWriter fw = new FileWriter("comboios.txt", true);
-             BufferedWriter bw = new BufferedWriter(fw);
-             PrintWriter out = new PrintWriter(bw)) {
 
-            //out.println(comboio.getNumero() + " " + comboio.getHorario().getHoraPartida() + " " + comboio.getHorario().getHoraChegada());
+    public static void insertLinhasEstacoes(int idLinha, int idEstacao) {
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection connection = DriverManager.getConnection(url, username, password);
+            String sql = "INSERT INTO linhas_estacoes (id_estacao, id_linha) VALUES (?, ?)";
+            PreparedStatement stmt = connection.prepareStatement(sql);
 
-            System.out.printf("Sucesso\n");
-        } catch (IOException e) {
-            System.out.printf(e.toString());
+            stmt.setInt(1, idEstacao);
+            stmt.setInt(2, idLinha);
+            stmt.executeUpdate();
+
+            stmt.close();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
-    public static Estacao[] verDadosEstacoes() {
-        return estacoes;
+    public static void updateLinhasEstacoes(int numero, int idLinha, int idEstacao) {
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection connection = DriverManager.getConnection(url, username, password);
+            String sql = "UPDATE linhas_estacoes SET id_estacao = ?, id_linha = ? WHERE numero = ?";
+            PreparedStatement stmt = connection.prepareStatement(sql);
+
+            stmt.setInt(1, idEstacao);
+            stmt.setInt(2, idLinha);
+            stmt.setInt(3, numero);
+            stmt.executeUpdate();
+
+            stmt.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
-    //ver dados existentes num ficheiro de texto
-    public static String verDadosTxt(String ficheiro) throws IOException {
-        return new String(Files.readAllBytes(Paths.get(ficheiro)));
+    public static void insertComboios(int lotacao) {
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection connection = DriverManager.getConnection(url, username, password);
+            String sql = "INSERT INTO comboios (lotacao) VALUES (?)";
+            PreparedStatement stmt = connection.prepareStatement(sql);
+
+            stmt.setInt(1, lotacao);
+            stmt.executeUpdate();
+
+            stmt.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
+
+    public static void insertHorarios(String horaPartida, String horaChegada, String sentido) {
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection connection = DriverManager.getConnection(url, username, password);
+            String sql = "INSERT INTO horarios (sentido, horaPartida, horaChegada) VALUES (?, ?, ?)";
+            PreparedStatement stmt = connection.prepareStatement(sql);
+
+            stmt.setString(1, sentido);
+            stmt.setString(2, horaPartida);
+            stmt.setString(3, horaChegada);
+            stmt.executeUpdate();
+
+            stmt.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void updateHorarios(int numero, String horaPartida, String horaChegada, String sentido) {
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection connection = DriverManager.getConnection(url, username, password);
+            String sql = "UPDATE horarios SET sentido = ?, horaPartida = ?, horaChegada = ? WHERE numero = ?";
+            PreparedStatement stmt = connection.prepareStatement(sql);
+
+            stmt.setString(1, sentido);
+            stmt.setString(2, horaPartida);
+            stmt.setString(3, horaChegada);
+            stmt.setInt(4, numero);
+            stmt.executeUpdate();
+
+            stmt.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void insertLinhasHorarios(int idLinha, int idHorario){
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection connection = DriverManager.getConnection(url, username, password);
+            String sql = "INSERT INTO horarios_linhas (id_horario, id_linha) VALUES (?, ?)";
+            PreparedStatement stmt = connection.prepareStatement(sql);
+
+            stmt.setInt(1, idHorario);
+            stmt.setInt(2, idLinha);
+            stmt.executeUpdate();
+
+            stmt.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void updateHorariosLinhas(int numero, int idLinha, int idHorario){
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection connection = DriverManager.getConnection(url, username, password);
+            String sql = "UPDATE horarios_linhas SET id_horario = ?, id_linha = ? WHERE numero = ?";
+            PreparedStatement stmt = connection.prepareStatement(sql);
+
+            stmt.setInt(1, idHorario);
+            stmt.setInt(2, idLinha);
+            stmt.setInt(3, numero);
+            stmt.executeUpdate();
+
+            stmt.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void insertBilhetes(int estacaoEntrada, int estacaoSaida, int idLinha, String sentido){
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection connection = DriverManager.getConnection(url, username, password);
+            String sql = "INSERT INTO bilhetes (estacaoEntrada, estacaoSaida, idLinha, sentido) VALUES (?, ?, ?, ?)";
+            PreparedStatement stmt = connection.prepareStatement(sql);
+
+            stmt.setInt(1, estacaoEntrada);
+            stmt.setInt(2, estacaoSaida);
+            stmt.setInt(3, idLinha);
+            stmt.setString(4, sentido);
+            stmt.executeUpdate();
+
+            stmt.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void updateBilhetes(int numero, int estacaoEntrada, int estacaoSaida, int idLinha, String sentido){
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection connection = DriverManager.getConnection(url, username, password);
+            String sql = "UPDATE bilhetes SET estacaoEntrada = ?, estacaoSaida = ?, idLinha = ?, sentido = ? WHERE numero = ?";
+            PreparedStatement stmt = connection.prepareStatement(sql);
+
+            stmt.setInt(1, estacaoEntrada);
+            stmt.setInt(2, estacaoSaida);
+            stmt.setInt(3, idLinha);
+            stmt.setString(4, sentido);
+            stmt.setInt(5, numero);
+            stmt.executeUpdate();
+
+            stmt.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void insertPassageiros(String nome, int idBilhete, int idEstacaoEntrada){
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection connection = DriverManager.getConnection(url, username, password);
+            String sql = "INSERT INTO passageiros (nome, idBilhete, idEstacaoEntrada) VALUES (?, ?, ?)";
+            PreparedStatement stmt = connection.prepareStatement(sql);
+
+            stmt.setString(1, nome);
+            stmt.setInt(2, idBilhete);
+            stmt.setInt(3, idEstacaoEntrada);
+            stmt.executeUpdate();
+
+            stmt.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void updatePassageiros(int numero, String nome, int idBilhete, int idEstacaoEntrada){
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection connection = DriverManager.getConnection(url, username, password);
+            String sql = "UPDATE passageiros SET nome = ?, idBilhete = ?, idEstacaoEntrada = ? WHERE numero = ?";
+            PreparedStatement stmt = connection.prepareStatement(sql);
+
+            stmt.setString(1, nome);
+            stmt.setInt(2, idBilhete);
+            stmt.setInt(3, idEstacaoEntrada);
+            stmt.setInt(4, numero);
+            stmt.executeUpdate();
+
+            stmt.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void deleteData(int numero, String tabela) {
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection connection = DriverManager.getConnection(url, username, password);
+            String sql = "DELETE FROM " + tabela + " WHERE numero = ?";
+            PreparedStatement stmt = connection.prepareStatement(sql);
+            stmt.setInt(1, numero);
+            stmt.executeUpdate();
+            stmt.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+//    public static Estacao[] estacoes = new Estacao[100];
+//
+//    public static void criaEstacoes() throws IOException {
+//        File file = new File("estacoes.txt");
+//        if (file.exists()) {
+//            BufferedReader br = new BufferedReader(new FileReader(file));
+//            String st;
+//            int i = 0;
+//            while ((st = br.readLine()) != null) {
+//                String[] estacao = st.split(", ");
+//                //estacoes[i] = new Estacao(Integer.parseInt(estacao[0]), Integer.parseInt(estacao[2]), estacao[1]);
+//                i++;
+//            }
+//        }
+//    }
+//
+//    //guardar dados de comboios num ficheiro de texto
+//    public static void guardarEstacoes(Estacao estacao) {
+//        try (FileWriter fw = new FileWriter("estacoes.txt", true);
+//             BufferedWriter bw = new BufferedWriter(fw);
+//             PrintWriter out = new PrintWriter(bw)) {
+//
+//            out.println(estacao.getNumero() + ", " + estacao.getNome() + ", " + estacao.getLotacao());
+//
+//            if (!out.checkError()) {
+//                System.out.printf("Sucesso\n");
+//                criaEstacoes();
+//            } else {
+//                System.out.printf("Erro\n");
+//            }
+//        } catch (IOException e) {
+//            System.out.printf(e.toString());
+//        }
+//    }
+//
+//    //guardar troços num ficheiro de texto
+//    public static void guardarTrocos(Linha linha) {
+//        try (FileWriter fw = new FileWriter("horario.txt", true);
+//             BufferedWriter bw = new BufferedWriter(fw);
+//             PrintWriter out = new PrintWriter(bw)) {
+//
+//            //out.println(linha.getNumero() + ", " + linha.getEstacao1().getNome() + ", " + linha.getEstacao2().getNome() + ", " + linha.getSentido());
+//
+//            System.out.printf("Sucesso\n");
+//        } catch (IOException e) {
+//            System.out.printf(e.toString());
+//        }
+//    }
+//
+//    //guardar horários num ficheiro de texto
+//    public static void guardarHorarios(Horario horario) {
+//        try (FileWriter fw = new FileWriter("horario.txt", true);
+//             BufferedWriter bw = new BufferedWriter(fw);
+//             PrintWriter out = new PrintWriter(bw)) {
+//
+//            //out.println(horario.getHoraPartida() + ", " + horario.getHoraChegada() + ", " + horario.getTroco().getNumero());
+//
+//            System.out.printf("Sucesso\n");
+//        } catch (IOException e) {
+//            System.out.printf(e.toString());
+//        }
+//    }
+//
+//    //guardar dados de comboios num ficheiro de texto
+//    public static void guardarComboios(Comboio comboio) {
+//        try (FileWriter fw = new FileWriter("comboios.txt", true);
+//             BufferedWriter bw = new BufferedWriter(fw);
+//             PrintWriter out = new PrintWriter(bw)) {
+//
+//            //out.println(comboio.getNumero() + " " + comboio.getHorario().getHoraPartida() + " " + comboio.getHorario().getHoraChegada());
+//
+//            System.out.printf("Sucesso\n");
+//        } catch (IOException e) {
+//            System.out.printf(e.toString());
+//        }
+//    }
+//
+//    public static Estacao[] verDadosEstacoes() {
+//        return estacoes;
+//    }
+//
+//    //ver dados existentes num ficheiro de texto
+//    public static String verDadosTxt(String ficheiro) throws IOException {
+//        return new String(Files.readAllBytes(Paths.get(ficheiro)));
+//    }
 }
