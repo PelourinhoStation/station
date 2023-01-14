@@ -20,10 +20,11 @@ public class MainController {
 
     @FXML
     protected void onBtnIniciarClick(){
-        for (int i =0;i<Main.comboiosParaPartir.size();i++){
-            Comboio comboio = Main.comboiosParaPartir.get(i);
-            comboio.start();
-        }
+        Main.iniciaComboios(Main.comboiosParaPartir);
+//        for (int i =0;i<Main.comboiosParaPartir.size();i++){
+//            Comboio comboio = Main.comboiosParaPartir.get(i);
+//            comboio.start();
+//        }
     }
 
     @FXML

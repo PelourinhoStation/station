@@ -112,7 +112,6 @@ public class Main extends Application {
             comboio.start(); //inicia os comboios que estão na lista
         }
 
-
     }
 
 //    public static void geradorDeDados() throws ClassNotFoundException {

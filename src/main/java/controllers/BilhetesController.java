@@ -111,8 +111,7 @@ public class BilhetesController {
             cbLinha.getItems().add(PainelControlo.linhas.get(i).getNumero() + " - " + PainelControlo.linhas.get(i).getNome());
         }
 
-        cbSentido.getItems().add("Ida");
-        cbSentido.getItems().add("Volta");
+        cbSentido.getItems().addAll("Ida", "Volta");
 
         for (int i = 0; i < PainelControlo.estacoes.size(); i++) {
             if (PainelControlo.linhas.get(0).getEstacoes().contains(PainelControlo.estacoes.get(i))) {
@@ -140,6 +139,7 @@ public class BilhetesController {
             cbLinha.getSelectionModel().select(bilheteModel.getIdLinha() - 1);
             cbEntrada.getSelectionModel().select(bilheteModel.getIdEstacaoEntra() - 1);
             cbSaida.getSelectionModel().select(bilheteModel.getIdEstacaoSaida() - 1);
+            cbSentido.getSelectionModel().select(bilheteModel.getSentido());
             txtNumero.setText(String.valueOf(bilheteModel.getNumero()));
             nRegisto = bilheteModel.getNumero();
             //nRegisto = horarioLinha.getNumero();
@@ -171,7 +171,7 @@ public class BilhetesController {
             String saida = cbSaida.getValue().toString();
             int idSaida = Integer.parseInt(saida.split(" - ")[0]);
 
-            PainelControlo.insertBilhetes(idEntrada, idSaida, idLinha, "Ida");
+            PainelControlo.insertBilhetes(idEntrada, idSaida, idLinha, cbSentido.getValue().toString());
 
             getDataToTableView();
         } catch (Exception e) {
@@ -191,7 +191,9 @@ public class BilhetesController {
             String saida = cbSaida.getValue().toString();
             int idSaida = Integer.parseInt(saida.split(" - ")[0]);
 
-            PainelControlo.updateBilhetes(nRegisto, idEntrada, idSaida, idLinha, "sentido");
+
+
+            PainelControlo.updateBilhetes(nRegisto, idEntrada, idSaida, idLinha, cbSentido.getValue().toString());
             getDataToTableView();
         } catch (Exception e) {
             lblAlerta.setText("Erro ao atualizar os dados!");

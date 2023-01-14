@@ -87,7 +87,7 @@ private TableColumn<Passageiro.PassegeiroModel, String> colEstacaoPassageiro;
         }
 
         for (int i = 0; i < PainelControlo.bilhetes.size(); i++) {
-            cbBilhete.getItems().add(PainelControlo.bilhetes.get(i).getNumero() + " - " + PainelControlo.bilhetes.get(i).getEstacaoEntra() + " - " + PainelControlo.bilhetes.get(i).getEstacaoSaida());
+            cbBilhete.getItems().add(PainelControlo.bilhetes.get(i).getNumero() + " - " + PainelControlo.bilhetes.get(i).getEstacaoEntra() + " - " + PainelControlo.bilhetes.get(i).getEstacaoSaida() + " - " + PainelControlo.bilhetes.get(i).getSentido());
         }
     }
 

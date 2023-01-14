@@ -13,6 +13,7 @@ public class HorariosController {
     @FXML
     private TableView<Horario> tblHorarios;
     private TableColumn<Horario, Integer> colNumero;
+    private TableColumn<Horario, Integer> colIdComboio;
     private TableColumn<Horario, Integer> colPartida;
     private TableColumn<Horario, String> colChegada;
     private TableColumn<Horario, String> colSentido;
@@ -24,7 +25,9 @@ public class HorariosController {
     @FXML
     private TextField txtChegada;
     @FXML
-    private TextField txtSentido;
+    private ComboBox cbSentido;
+    @FXML
+    private ComboBox cbComboio;
     @FXML
     private Label lblAlerta;
     @FXML
@@ -46,6 +49,8 @@ public class HorariosController {
         colChegada.setCellValueFactory(new PropertyValueFactory<>("horaChegada"));
         colSentido = new TableColumn<>("Sentido");
         colSentido.setCellValueFactory(new PropertyValueFactory<>("sentido"));
+        colIdComboio = new TableColumn<>("Comboio");
+        colIdComboio.setCellValueFactory(new PropertyValueFactory<>("idComboio"));
 
         //Permitir a seleção de apenas uma linha da tabela
         TableView.TableViewSelectionModel<Horario> selectionModel =
@@ -53,9 +58,11 @@ public class HorariosController {
         selectionModel.setSelectionMode(
                 SelectionMode.SINGLE);
 
-        tblHorarios.getColumns().addAll(colNumero, colPartida, colChegada, colSentido);
+        tblHorarios.getColumns().addAll(colNumero, colPartida, colChegada, colSentido, colIdComboio);
 
+        initializeComboBox();
         getDataToTableView();
+
     }
 
     public void getDataToTableView() throws IOException, ClassNotFoundException {
@@ -63,6 +70,19 @@ public class HorariosController {
         PainelControlo.getDados();
         //adicionar dados à tabela
         tblHorarios.setItems(FXCollections.observableArrayList(PainelControlo.horarios));
+    }
+
+    public void initializeComboBox() {
+        cbSentido.getItems().clear();
+        cbComboio.getItems().clear();
+
+        cbSentido.getItems().addAll("Ida", "Volta");
+        cbSentido.getSelectionModel().selectFirst();
+
+        for (int i = 0; i < PainelControlo.comboios.size(); i++) {
+            cbComboio.getItems().add(PainelControlo.comboios.get(i).getNumero());
+        }
+        cbComboio.getSelectionModel().selectFirst();
     }
 
     public void onRowSelect(){
@@ -78,7 +98,8 @@ public class HorariosController {
             txtNumero.setText(String.valueOf(selectedItem.getNumero()));
             txtChegada.setText(selectedItem.getHoraChegada());
             txtPartida.setText(selectedItem.getHoraPartida());
-            txtSentido.setText(selectedItem.getSentido());
+            cbSentido.setValue(selectedItem.getSentido());
+            cbComboio.setValue(selectedItem.getIdComboio());
         }
     }
 
@@ -91,12 +112,11 @@ public class HorariosController {
         txtNumero.setText("");
         txtChegada.setText("");
         txtPartida.setText("");
-        txtSentido.setText("");
     }
 
     public void onSaveClick() throws IOException, ClassNotFoundException {
         try {
-            PainelControlo.insertHorarios(txtPartida.getText(), txtChegada.getText(), txtSentido.getText());
+            PainelControlo.insertHorarios(txtPartida.getText(), txtChegada.getText(), cbSentido.getValue().toString(), Integer.parseInt(cbComboio.getValue().toString()));
             getDataToTableView();
         } catch (Exception e) {
             lblAlerta.setText("Erro ao guardar os dados!");
@@ -105,7 +125,7 @@ public class HorariosController {
 
     public void onUpdateClick() throws IOException, ClassNotFoundException {
         try {
-            PainelControlo.updateHorarios(Integer.parseInt(txtNumero.getText()), txtPartida.getText(), txtChegada.getText(), txtSentido.getText());
+            PainelControlo.updateHorarios(Integer.parseInt(txtNumero.getText()), txtPartida.getText(), txtChegada.getText(), cbSentido.getValue().toString(), Integer.parseInt(cbComboio.getValue().toString()));
             getDataToTableView();
         } catch (Exception e){
             lblAlerta.setText("Erro ao atualizar os dados!");

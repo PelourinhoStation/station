@@ -59,7 +59,14 @@ public class Comboio extends Thread {
     }
 
     public void setHorarios(Horario horario) {
-        this.horarios.add(horario);
+        try {
+            this.semaforo.acquire();
+            this.horarios.add(horario);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        } finally {
+            this.semaforo.release();
+        }
     }
 
     public int getPassageiros() {
@@ -169,10 +176,6 @@ public class Comboio extends Thread {
     public void run() {
 
         // Código para percorrer os horarios atribuidos ao comboio
-        System.out.println(horarios.size());
-        System.out.println(horarios.get(0).getLinha());
-        System.out.println(horarios.get(1).getLinha());
-
         for (int i = 0; i < horarios.size(); i++) {
             this.setHorarioAtual(horarios.get(i)); //atribui o horário atual ao comboio
             Linha line = horarios.get(i).getLinha(); //get da linha do horário atual
@@ -279,5 +282,6 @@ public class Comboio extends Thread {
                 System.out.println("\n");
             }
         }
+        System.out.println("Comboio " + getNumero() + " completou os seus horários.");
     }
 }

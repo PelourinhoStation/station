@@ -20,10 +20,10 @@ public class PainelControlo {
     public static String username = "root";
     public static String password = "";
 
-    // Cria a conexão com a base de dados online
-    public static String urlOnline = "jdbc:mysql://db4free.net/so_station";
-    public static String usernameOnline = "so_user";
-    public static String passwordOnline = "sistemasoperativos";
+//    // Cria a conexão com a base de dados online
+//    public static String urlOnline = "jdbc:mysql://db4free.net/so_station";
+//    public static String usernameOnline = "so_user";
+//    public static String passwordOnline = "sistemasoperativos";
 
     // estruturas para armazenar dados
     public static ObservableList<Estacao> estacoes = FXCollections.observableArrayList();
@@ -43,9 +43,10 @@ public class PainelControlo {
 
             Connection connection = DriverManager.getConnection(url, username, password);
             //Connection connection = DriverManager.getConnection(urlOnline, usernameOnline, passwordOnline);
-
+            int last = 0;
             // get comboios
             try {
+                last = 0;
                 comboios.clear();
                 // Crie a consulta SQL para selecionar os dados das estações
                 String sql = "SELECT * FROM comboios";
@@ -59,9 +60,22 @@ public class PainelControlo {
                     Comboio comboio = new Comboio(numero, lotacao);
                     comboios.add(comboio);
                     Main.comboios.put(numero, comboio);
+                    last = numero;
                 }
                 stmt.close();
                 rs.close();
+
+                try {
+                    Class.forName("com.mysql.cj.jdbc.Driver");
+                    String sql1 = "ALTER TABLE comboios AUTO_INCREMENT = ?;";
+                    PreparedStatement stmt1 = connection.prepareStatement(sql1);
+                    stmt1.setInt(1, last + 1);
+                    stmt1.executeUpdate();
+                    stmt1.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -69,6 +83,7 @@ public class PainelControlo {
 
             // get estacoes
             try {
+                last = 0;
                 estacoes.clear();
                 // Crie a consulta SQL para selecionar os dados das estações
                 String sql = "SELECT * FROM estacoes";
@@ -83,9 +98,21 @@ public class PainelControlo {
                     Estacao estacao = new Estacao(numero, nome, lotacao);
                     estacoes.add(estacao);
                     Main.estacoes.put(numero, estacao);
+                    last = numero;
                 }
                 stmt.close();
                 rs.close();
+
+                try {
+                    Class.forName("com.mysql.cj.jdbc.Driver");
+                    String sql1 = "ALTER TABLE estacoes AUTO_INCREMENT = ?;";
+                    PreparedStatement stmt1 = connection.prepareStatement(sql1);
+                    stmt1.setInt(1, last + 1);
+                    stmt1.executeUpdate();
+                    stmt1.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -93,6 +120,7 @@ public class PainelControlo {
 
             // get linhas
             try {
+                last = 0;
                 linhas.clear();
                 Main.linhas.clear();
                 // Crie a consulta SQL para selecionar os dados das estações
@@ -106,9 +134,21 @@ public class PainelControlo {
                     Linha linha = new Linha(numero, nome);
                     linhas.add(linha);
                     Main.linhas.put(numero, linha);
+                    last = numero;
                 }
                 stmt.close();
                 rs.close();
+
+                try {
+                    Class.forName("com.mysql.cj.jdbc.Driver");
+                    String sql1 = "ALTER TABLE linhas AUTO_INCREMENT = ?;";
+                    PreparedStatement stmt1 = connection.prepareStatement(sql1);
+                    stmt1.setInt(1, last + 1);
+                    stmt1.executeUpdate();
+                    stmt1.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -116,6 +156,7 @@ public class PainelControlo {
 
             // get linhas - estacoes
             try {
+                last = 0;
                 linhasEstacoes.clear();
                 Main.estacoesLinhaPorto1.clear();
                 Main.estacoesLinhaPorto2.clear();
@@ -150,9 +191,21 @@ public class PainelControlo {
                             Main.linhas.get(idLinha).setEstacoes(Main.estacoesLinhaPorto3);
                             break;
                     }
+                    last = numero;
                 }
                 stmt.close();
                 rs.close();
+
+                try {
+                    Class.forName("com.mysql.cj.jdbc.Driver");
+                    String sql1 = "ALTER TABLE linhas_estacoes AUTO_INCREMENT = ?;";
+                    PreparedStatement stmt1 = connection.prepareStatement(sql1);
+                    stmt1.setInt(1, last + 1);
+                    stmt1.executeUpdate();
+                    stmt1.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -161,6 +214,7 @@ public class PainelControlo {
 
             // get horarios
             try {
+                last = 0;
                 horarios.clear();
                 Main.horarios.clear();
                 Main.horariosLinhaPorto1.clear();
@@ -180,18 +234,37 @@ public class PainelControlo {
                     horarios.add(horario);
                     Main.horarios.put(numero, horario);
 
-                    comboios.get(idComboio-1).setHorarios(horario);
-                    comboios.get(idComboio-1).setPassageiros(Main.passageiros);
+                    Main.comboios.get(idComboio).setHorarios(Main.horarios.get(numero));
+                    Main.comboios.get(idComboio).setPassageiros(Main.passageiros);
 
+                    last = numero;
                 }
+//                System.out.println(Main.horarios.get(1).getNumero());
+//                System.out.println(Main.horarios.get(4).getNumero());
+//
+//                Main.comboios.get(1).setHorarios(Main.horarios.get(3));
+//                Main.comboios.get(1).setPassageiros(Main.passageiros);
+
                 stmt.close();
                 rs.close();
+
+                try {
+                    Class.forName("com.mysql.cj.jdbc.Driver");
+                    String sql1 = "ALTER TABLE horarios AUTO_INCREMENT = ?;";
+                    PreparedStatement stmt1 = connection.prepareStatement(sql1);
+                    stmt1.setInt(1, last + 1);
+                    stmt1.executeUpdate();
+                    stmt1.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
 
             // get horarios - linhas
             try {
+                last = 0;
                 horariosLinhas.clear();
                 // Crie a consulta SQL para selecionar os dados das estações
                 String sql = "SELECT horarios_linhas.numero, horarios.numero AS nHorario, horarios.horaPartida, horarios.horaChegada, linhas.numero AS nLinha, linhas.nome, horarios.sentido FROM horarios, linhas, horarios_linhas WHERE horarios.numero = horarios_linhas.id_horario AND linhas.numero = horarios_linhas.id_linha";
@@ -209,23 +282,37 @@ public class PainelControlo {
 
                     Horario.HorariosLinhas horarioLinha = new Horario.HorariosLinhas(numero, nHorario, nLinha, horaChegada, horaPartida, sentido, nomeLinha);
                     horariosLinhas.add(horarioLinha);
+
+                    //System.out.println(Main.horarios.get(nHorario).getNumero() + " - " + Main.linhas.get(nLinha).getNumero());
                     Main.horarios.get(nHorario).setLinha(Main.linhas.get(nLinha));
 
-                    switch (nLinha){
-                        case 1:
-                            Main.horariosLinhaPorto1.add(Main.horarios.get(nHorario));
-                            break;
-                        case 2:
-                            Main.horariosLinhaPorto2.add(Main.horarios.get(nHorario));
-                            break;
-                        case 3:
-                            Main.horariosLinhaPorto3.add(Main.horarios.get(nHorario));
-                            break;
-                    }
+//                    switch (nLinha) {
+//                        case 1:
+//                            Main.horariosLinhaPorto1.add(Main.horarios.get(nHorario));
+//                            break;
+//                        case 2:
+//                            Main.horariosLinhaPorto2.add(Main.horarios.get(nHorario));
+//                            break;
+//                        case 3:
+//                            Main.horariosLinhaPorto3.add(Main.horarios.get(nHorario));
+//                            break;
+//                    }
 
+                    last = numero;
                 }
                 stmt.close();
                 rs.close();
+
+                try {
+                    Class.forName("com.mysql.cj.jdbc.Driver");
+                    String sql1 = "ALTER TABLE horarios_linhas AUTO_INCREMENT = ?;";
+                    PreparedStatement stmt1 = connection.prepareStatement(sql1);
+                    stmt1.setInt(1, last + 1);
+                    stmt1.executeUpdate();
+                    stmt1.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -233,6 +320,7 @@ public class PainelControlo {
 
             // get bilhetes
             try {
+                last = 0;
                 bilhetes.clear();
                 // Crie a consulta SQL para selecionar os dados das estações
                 String sql = "SELECT bilhetes.numero, bilhetes.estacaoEntrada AS idEstacaoEntrada, estacaoEntrada.nome AS estacaoEntrada, bilhetes.estacaoSaida AS idEstacaoSaida, estacaoSaida.nome AS estacaoSaida, bilhetes.idLinha, linhas.nome AS nomeLinha, sentido FROM bilhetes JOIN estacoes AS estacaoEntrada ON bilhetes.estacaoEntrada = estacaoEntrada.numero JOIN estacoes AS estacaoSaida ON bilhetes.estacaoSaida = estacaoSaida.numero JOIN linhas ON bilhetes.idLinha = linhas.numero";
@@ -253,9 +341,22 @@ public class PainelControlo {
                     Bilhete.ModelBilhete bilheteModel = new Bilhete.ModelBilhete(numero, idEstacaoEntrada, estacaoEntrada, idEstacaoSaida, estacaoSaida, idLinha, nomeLinha, sentido);
                     bilhetes.add(bilheteModel);
                     Main.bilhetes.put(numero, bilhete);
+                    last = numero;
                 }
                 stmt.close();
                 rs.close();
+
+                try {
+                    Class.forName("com.mysql.cj.jdbc.Driver");
+                    String sql1 = "ALTER TABLE bilhetes AUTO_INCREMENT = ?;";
+                    PreparedStatement stmt1 = connection.prepareStatement(sql1);
+                    stmt1.setInt(1, last+1);
+                    stmt1.executeUpdate();
+                    stmt1.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -263,6 +364,7 @@ public class PainelControlo {
 
             // get passageiros
             try {
+                last = 0;
                 passageiros.clear();
                 // Crie a consulta SQL para selecionar os dados das estações
                 String sql = "SELECT passageiros.numero, passageiros.nome, estacaoEntrada.nome AS estacaoEntrada, estacaoSaida.nome as estacaoSaida, estacoes.nome as estacaoEntradaP, passageiros.idBilhete, passageiros.idEstacaoEntrada FROM bilhetes JOIN estacoes AS estacaoEntrada ON bilhetes.estacaoEntrada = estacaoEntrada.numero JOIN estacoes AS estacaoSaida ON bilhetes.estacaoSaida = estacaoSaida.numero JOIN passageiros ON passageiros.idBilhete = bilhetes.numero JOIN estacoes ON passageiros.idEstacaoEntrada = estacoes.numero";
@@ -282,9 +384,21 @@ public class PainelControlo {
                     Passageiro.PassegeiroModel passageiroModel = new Passageiro.PassegeiroModel(numero, nome, estacaoEntrada, estacaoSaida, estacaoEntradP, idEstacaoEntrada, idBilhete);
                     passageiros.add(passageiroModel);
                     Main.passageiros.add(passageiro);
+                    last = numero;
                 }
                 stmt.close();
                 rs.close();
+
+                try {
+                    Class.forName("com.mysql.cj.jdbc.Driver");
+                    String sql1 = "ALTER TABLE passageiros AUTO_INCREMENT = ?;";
+                    PreparedStatement stmt1 = connection.prepareStatement(sql1);
+                    stmt1.setInt(1, last+1);
+                    stmt1.executeUpdate();
+                    stmt1.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -415,16 +529,17 @@ public class PainelControlo {
         }
     }
 
-    public static void insertHorarios(String horaPartida, String horaChegada, String sentido) {
+    public static void insertHorarios(String horaPartida, String horaChegada, String sentido, int idComboio) {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
             Connection connection = DriverManager.getConnection(url, username, password);
-            String sql = "INSERT INTO horarios (sentido, horaPartida, horaChegada) VALUES (?, ?, ?)";
+            String sql = "INSERT INTO horarios (sentido, horaPartida, horaChegada, id_comboio) VALUES (?, ?, ?, ?)";
             PreparedStatement stmt = connection.prepareStatement(sql);
 
             stmt.setString(1, sentido);
             stmt.setString(2, horaPartida);
             stmt.setString(3, horaChegada);
+            stmt.setInt(4, idComboio);
             stmt.executeUpdate();
 
             stmt.close();
@@ -433,17 +548,18 @@ public class PainelControlo {
         }
     }
 
-    public static void updateHorarios(int numero, String horaPartida, String horaChegada, String sentido) {
+    public static void updateHorarios(int numero, String horaPartida, String horaChegada, String sentido, int idComboio) {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
             Connection connection = DriverManager.getConnection(url, username, password);
-            String sql = "UPDATE horarios SET sentido = ?, horaPartida = ?, horaChegada = ? WHERE numero = ?";
+            String sql = "UPDATE horarios SET sentido = ?, horaPartida = ?, horaChegada = ?, id_comboio = ? WHERE numero = ?";
             PreparedStatement stmt = connection.prepareStatement(sql);
 
             stmt.setString(1, sentido);
             stmt.setString(2, horaPartida);
             stmt.setString(3, horaChegada);
-            stmt.setInt(4, numero);
+            stmt.setInt(4, idComboio);
+            stmt.setInt(5, numero);
             stmt.executeUpdate();
 
             stmt.close();
@@ -452,7 +568,7 @@ public class PainelControlo {
         }
     }
 
-    public static void insertLinhasHorarios(int idLinha, int idHorario){
+    public static void insertLinhasHorarios(int idLinha, int idHorario) {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
             Connection connection = DriverManager.getConnection(url, username, password);
@@ -469,7 +585,7 @@ public class PainelControlo {
         }
     }
 
-    public static void updateHorariosLinhas(int numero, int idLinha, int idHorario){
+    public static void updateHorariosLinhas(int numero, int idLinha, int idHorario) {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
             Connection connection = DriverManager.getConnection(url, username, password);
@@ -487,7 +603,7 @@ public class PainelControlo {
         }
     }
 
-    public static void insertBilhetes(int estacaoEntrada, int estacaoSaida, int idLinha, String sentido){
+    public static void insertBilhetes(int estacaoEntrada, int estacaoSaida, int idLinha, String sentido) {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
             Connection connection = DriverManager.getConnection(url, username, password);
@@ -506,7 +622,7 @@ public class PainelControlo {
         }
     }
 
-    public static void updateBilhetes(int numero, int estacaoEntrada, int estacaoSaida, int idLinha, String sentido){
+    public static void updateBilhetes(int numero, int estacaoEntrada, int estacaoSaida, int idLinha, String sentido) {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
             Connection connection = DriverManager.getConnection(url, username, password);
@@ -526,7 +642,7 @@ public class PainelControlo {
         }
     }
 
-    public static void insertPassageiros(String nome, int idBilhete, int idEstacaoEntrada){
+    public static void insertPassageiros(String nome, int idBilhete, int idEstacaoEntrada) {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
             Connection connection = DriverManager.getConnection(url, username, password);
@@ -544,7 +660,7 @@ public class PainelControlo {
         }
     }
 
-    public static void updatePassageiros(int numero, String nome, int idBilhete, int idEstacaoEntrada){
+    public static void updatePassageiros(int numero, String nome, int idBilhete, int idEstacaoEntrada) {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
             Connection connection = DriverManager.getConnection(url, username, password);
