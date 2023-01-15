@@ -20,11 +20,6 @@ public class PainelControlo {
     public static String username = "root";
     public static String password = "";
 
-//    // Cria a conexão com a base de dados online
-//    public static String urlOnline = "jdbc:mysql://db4free.net/so_station";
-//    public static String usernameOnline = "so_user";
-//    public static String passwordOnline = "sistemasoperativos";
-
     // estruturas para armazenar dados
     public static ObservableList<Estacao> estacoes = FXCollections.observableArrayList();
     public static ObservableList<Comboio> comboios = FXCollections.observableArrayList();
@@ -384,7 +379,7 @@ public class PainelControlo {
                     Class.forName("com.mysql.cj.jdbc.Driver");
                     String sql1 = "ALTER TABLE bilhetes AUTO_INCREMENT = ?;";
                     PreparedStatement stmt1 = connection.prepareStatement(sql1);
-                    stmt1.setInt(1, last+1);
+                    stmt1.setInt(1, last + 1);
                     stmt1.executeUpdate();
                     stmt1.close();
                 } catch (Exception e) {
@@ -427,7 +422,7 @@ public class PainelControlo {
                     Class.forName("com.mysql.cj.jdbc.Driver");
                     String sql1 = "ALTER TABLE passageiros AUTO_INCREMENT = ?;";
                     PreparedStatement stmt1 = connection.prepareStatement(sql1);
-                    stmt1.setInt(1, last+1);
+                    stmt1.setInt(1, last + 1);
                     stmt1.executeUpdate();
                     stmt1.close();
                 } catch (Exception e) {
@@ -733,7 +728,7 @@ public class PainelControlo {
     public static boolean verfyData(int numero, String tabela) throws SQLException {
         Connection connection = DriverManager.getConnection(url, username, password);
 
-        if(tabela.equals("horarios")){
+        if (tabela.equals("horarios")) {
             String sql = "SELECT * FROM `horarios_linhas` WHERE id_horario = ?";
             PreparedStatement stmt = connection.prepareStatement(sql);
             stmt.setInt(1, numero);
@@ -742,7 +737,7 @@ public class PainelControlo {
 
             while (rs.next()) {
                 int idHorario = rs.getInt("id_horario");
-                if(idHorario == numero){
+                if (idHorario == numero) {
                     return false;
                 } else {
                     return true;
@@ -756,7 +751,7 @@ public class PainelControlo {
     }
 
     public static void deleteData(int numero, String tabela) throws SQLException {
-        if(verfyData(numero, tabela)){
+        if (verfyData(numero, tabela)) {
             Connection connection = DriverManager.getConnection(url, username, password);
             try {
                 Class.forName("com.mysql.cj.jdbc.Driver");
@@ -774,91 +769,4 @@ public class PainelControlo {
 
 
     }
-
-
-//    public static Estacao[] estacoes = new Estacao[100];
-//
-//    public static void criaEstacoes() throws IOException {
-//        File file = new File("estacoes.txt");
-//        if (file.exists()) {
-//            BufferedReader br = new BufferedReader(new FileReader(file));
-//            String st;
-//            int i = 0;
-//            while ((st = br.readLine()) != null) {
-//                String[] estacao = st.split(", ");
-//                //estacoes[i] = new Estacao(Integer.parseInt(estacao[0]), Integer.parseInt(estacao[2]), estacao[1]);
-//                i++;
-//            }
-//        }
-//    }
-//
-//    //guardar dados de comboios num ficheiro de texto
-//    public static void guardarEstacoes(Estacao estacao) {
-//        try (FileWriter fw = new FileWriter("estacoes.txt", true);
-//             BufferedWriter bw = new BufferedWriter(fw);
-//             PrintWriter out = new PrintWriter(bw)) {
-//
-//            out.println(estacao.getNumero() + ", " + estacao.getNome() + ", " + estacao.getLotacao());
-//
-//            if (!out.checkError()) {
-//                System.out.printf("Sucesso\n");
-//                criaEstacoes();
-//            } else {
-//                System.out.printf("Erro\n");
-//            }
-//        } catch (IOException e) {
-//            System.out.printf(e.toString());
-//        }
-//    }
-//
-//    //guardar troços num ficheiro de texto
-//    public static void guardarTrocos(Linha linha) {
-//        try (FileWriter fw = new FileWriter("horario.txt", true);
-//             BufferedWriter bw = new BufferedWriter(fw);
-//             PrintWriter out = new PrintWriter(bw)) {
-//
-//            //out.println(linha.getNumero() + ", " + linha.getEstacao1().getNome() + ", " + linha.getEstacao2().getNome() + ", " + linha.getSentido());
-//
-//            System.out.printf("Sucesso\n");
-//        } catch (IOException e) {
-//            System.out.printf(e.toString());
-//        }
-//    }
-//
-//    //guardar horários num ficheiro de texto
-//    public static void guardarHorarios(Horario horario) {
-//        try (FileWriter fw = new FileWriter("horario.txt", true);
-//             BufferedWriter bw = new BufferedWriter(fw);
-//             PrintWriter out = new PrintWriter(bw)) {
-//
-//            //out.println(horario.getHoraPartida() + ", " + horario.getHoraChegada() + ", " + horario.getTroco().getNumero());
-//
-//            System.out.printf("Sucesso\n");
-//        } catch (IOException e) {
-//            System.out.printf(e.toString());
-//        }
-//    }
-//
-//    //guardar dados de comboios num ficheiro de texto
-//    public static void guardarComboios(Comboio comboio) {
-//        try (FileWriter fw = new FileWriter("comboios.txt", true);
-//             BufferedWriter bw = new BufferedWriter(fw);
-//             PrintWriter out = new PrintWriter(bw)) {
-//
-//            //out.println(comboio.getNumero() + " " + comboio.getHorario().getHoraPartida() + " " + comboio.getHorario().getHoraChegada());
-//
-//            System.out.printf("Sucesso\n");
-//        } catch (IOException e) {
-//            System.out.printf(e.toString());
-//        }
-//    }
-//
-//    public static Estacao[] verDadosEstacoes() {
-//        return estacoes;
-//    }
-//
-//    //ver dados existentes num ficheiro de texto
-//    public static String verDadosTxt(String ficheiro) throws IOException {
-//        return new String(Files.readAllBytes(Paths.get(ficheiro)));
-//    }
 }
