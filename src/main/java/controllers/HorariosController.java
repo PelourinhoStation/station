@@ -1,11 +1,16 @@
 package controllers;
 
 import com.so.tp.fx.Horario;
+import com.so.tp.fx.Main;
 import com.so.tp.fx.PainelControlo;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.stage.Stage;
 
 import java.io.IOException;
 
@@ -137,6 +142,7 @@ public class HorariosController {
             PainelControlo.deleteData(Integer.parseInt(txtNumero.getText()), "horarios");
             getDataToTableView();
         } catch (Exception e) {
+            //lbAlert("Erro ao eliminar os dados!");
             lblAlerta.setText("Erro ao eliminar os dados!");
         }
     }

@@ -158,9 +158,16 @@ public class PainelControlo {
             try {
                 last = 0;
                 linhasEstacoes.clear();
-                Main.estacoesLinhaPorto1.clear();
-                Main.estacoesLinhaPorto2.clear();
-                Main.estacoesLinhaPorto3.clear();
+                Main.estacoes1.clear();
+                Main.estacoes2.clear();
+                Main.estacoes3.clear();
+                Main.estacoes4.clear();
+                Main.estacoes5.clear();
+                Main.estacoes6.clear();
+                Main.estacoes7.clear();
+                Main.estacoes8.clear();
+                Main.estacoes9.clear();
+                Main.estacoes10.clear();
                 // Crie a consulta SQL para selecionar os dados das estações
                 String sql = "SELECT linhas_estacoes.numero, estacoes.numero as numeroEstacao, estacoes.nome, estacoes.lotacao, linhas.numero AS idLinha, linhas.nome AS nomeLinha FROM linhas_estacoes JOIN linhas ON linhas_estacoes.id_linha = linhas.numero JOIN estacoes ON linhas_estacoes.id_estacao = estacoes.numero";
                 Statement stmt = connection.createStatement();
@@ -179,16 +186,44 @@ public class PainelControlo {
 
                     switch (idLinha) {
                         case 1:
-                            Main.estacoesLinhaPorto1.add(Main.estacoes.get(numero));
-                            Main.linhas.get(idLinha).setEstacoes(Main.estacoesLinhaPorto1);
+                            Main.estacoes1.add(Main.estacoes.get(numero));
+                            Main.linhas.get(idLinha).setEstacoes(Main.estacoes1);
                             break;
                         case 2:
-                            Main.estacoesLinhaPorto2.add(Main.estacoes.get(numero));
-                            Main.linhas.get(idLinha).setEstacoes(Main.estacoesLinhaPorto2);
+                            Main.estacoes2.add(Main.estacoes.get(numero));
+                            Main.linhas.get(idLinha).setEstacoes(Main.estacoes2);
                             break;
                         case 3:
-                            Main.estacoesLinhaPorto3.add(Main.estacoes.get(numero));
-                            Main.linhas.get(idLinha).setEstacoes(Main.estacoesLinhaPorto3);
+                            Main.estacoes3.add(Main.estacoes.get(numero));
+                            Main.linhas.get(idLinha).setEstacoes(Main.estacoes3);
+                            break;
+                        case 4:
+                            Main.estacoes4.add(Main.estacoes.get(numero));
+                            Main.linhas.get(idLinha).setEstacoes(Main.estacoes4);
+                            break;
+                        case 5:
+                            Main.estacoes5.add(Main.estacoes.get(numero));
+                            Main.linhas.get(idLinha).setEstacoes(Main.estacoes5);
+                            break;
+                        case 6:
+                            Main.estacoes6.add(Main.estacoes.get(numero));
+                            Main.linhas.get(idLinha).setEstacoes(Main.estacoes6);
+                            break;
+                        case 7:
+                            Main.estacoes7.add(Main.estacoes.get(numero));
+                            Main.linhas.get(idLinha).setEstacoes(Main.estacoes7);
+                            break;
+                        case 8:
+                            Main.estacoes8.add(Main.estacoes.get(numero));
+                            Main.linhas.get(idLinha).setEstacoes(Main.estacoes8);
+                            break;
+                        case 9:
+                            Main.estacoes9.add(Main.estacoes.get(numero));
+                            Main.linhas.get(idLinha).setEstacoes(Main.estacoes9);
+                            break;
+                        case 10:
+                            Main.estacoes10.add(Main.estacoes.get(numero));
+                            Main.linhas.get(idLinha).setEstacoes(Main.estacoes10);
                             break;
                     }
                     last = numero;
@@ -217,7 +252,6 @@ public class PainelControlo {
                 last = 0;
                 horarios.clear();
                 Main.horarios.clear();
-                Main.horariosLinhaPorto1.clear();
                 // Crie a consulta SQL para selecionar os dados das estações
                 String sql = "SELECT * FROM horarios";
                 Statement stmt = connection.createStatement();
@@ -529,6 +563,23 @@ public class PainelControlo {
         }
     }
 
+    public static void updateComboios(int numero, int lotacao) {
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection connection = DriverManager.getConnection(url, username, password);
+            String sql = "UPDATE comboios SET lotacao = ? WHERE numero = ?";
+            PreparedStatement stmt = connection.prepareStatement(sql);
+
+            stmt.setInt(1, lotacao);
+            stmt.setInt(2, numero);
+            stmt.executeUpdate();
+
+            stmt.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void insertHorarios(String horaPartida, String horaChegada, String sentido, int idComboio) {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
@@ -679,18 +730,49 @@ public class PainelControlo {
         }
     }
 
-    public static void deleteData(int numero, String tabela) {
-        try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection connection = DriverManager.getConnection(url, username, password);
-            String sql = "DELETE FROM " + tabela + " WHERE numero = ?";
+    public static boolean verfyData(int numero, String tabela) throws SQLException {
+        Connection connection = DriverManager.getConnection(url, username, password);
+
+        if(tabela.equals("horarios")){
+            String sql = "SELECT * FROM `horarios_linhas` WHERE id_horario = ?";
             PreparedStatement stmt = connection.prepareStatement(sql);
             stmt.setInt(1, numero);
-            stmt.executeUpdate();
+
+            ResultSet rs = stmt.executeQuery(sql);
+
+            while (rs.next()) {
+                int idHorario = rs.getInt("id_horario");
+                if(idHorario == numero){
+                    return false;
+                } else {
+                    return true;
+                }
+            }
             stmt.close();
-        } catch (Exception e) {
-            e.printStackTrace();
+            rs.close();
         }
+
+        return true;
+    }
+
+    public static void deleteData(int numero, String tabela) throws SQLException {
+        if(verfyData(numero, tabela)){
+            Connection connection = DriverManager.getConnection(url, username, password);
+            try {
+                Class.forName("com.mysql.cj.jdbc.Driver");
+                String sql = "DELETE FROM " + tabela + " WHERE numero = ?";
+                PreparedStatement stmt = connection.prepareStatement(sql);
+                stmt.setInt(1, numero);
+                stmt.executeUpdate();
+                stmt.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else {
+            System.out.println("Não foi possivel apagar o dado");
+        }
+
+
     }
 
 

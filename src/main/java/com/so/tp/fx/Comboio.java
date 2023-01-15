@@ -19,7 +19,6 @@ public class Comboio extends Thread {
     public Comboio(int numero, int lotacao) {
         this.numero = numero;
         this.lotacao = lotacao;
-        this.horarios = null;
         this.nPassageiros = 0;
         this.estacaoAtual = null;
         this.portasAbertas = false;
@@ -139,7 +138,7 @@ public class Comboio extends Thread {
         if (!passageiro.getBilhete().isValido(passageiro, comboio)) {
             passageiro.setTentouEntrar(true); //é registado que o passageiro tentou entrar no comboio
         } else if (!passageiro.isEstaNoComboio() && !passageiro.isSaiuDoComboio()) { //senão se o passageiro não estiver no comboio e não tiver saído do comboio antes
-            if (!this.isOvercrowded() && comboio.nPassageiros + 1 < comboio.getLotacao()) { //se o comboio não estiver sobrelotado e se o número de passageiros no comboio for menor que a lotação do comboio
+            if (!this.isOvercrowded()) { //se o comboio não estiver sobrelotado
                 //verifica o passageiro que tem a viagem menor
                 passageiro.setComboio(this); //registar o comboio em que o passageiro está
                 this.addPassenger(passageiro); //adiciona o passageiro ao comboio
@@ -147,10 +146,8 @@ public class Comboio extends Thread {
                 // sout do embarque
                 System.out.println("Passageiro " + passageiro.getNome() + " embarcou no comboio " + getNumero() + " na estação " + getEstacaoAtual().getNome());
                 passageiro.contarEstacoesBilhete(passageiro);
-            } else if (!this.isOvercrowded() && comboio.nPassageiros + 1 == comboio.getLotacao()){
-
             } else {
-                System.out.println("Passageiro " + passageiro.getNome() + " não embarcou no comboio " + getNumero() + " na estação " + getEstacaoAtual().getNome() + "porque o comboio estava sobrelotado");
+                System.out.println("Passageiro " + passageiro.getNome() + " não embarcou no comboio " + getNumero() + " na estação " + getEstacaoAtual().getNome() + " porque o comboio estava sobrelotado");
             }
         }
     }
@@ -166,7 +163,7 @@ public class Comboio extends Thread {
         }
     }
 
-   public void verEntradaPassageiros(Passageiro passageiro) {
+    public void verEntradaPassageiros(Passageiro passageiro) {
         for (int i = 0; i < passageiros.size(); i++) {
             System.out.println("Passageiro " + passageiro.getNome() + "entra na estação " + passageiro.getEstacaoEntrada().getNome());
             break;
@@ -191,7 +188,7 @@ public class Comboio extends Thread {
             String sentido = horarios.get(i).getSentido(); //get do sentido do horário atual
 
 
-            if (sentido.equals("Ida")){
+            if (sentido.equals("Ida")) {
                 System.out.println("Comboio " + getNumero() + " vai partir da estação " + getEstacaoAtual().getNome() + " às " + horarios.get(i).getHoraPartida() + "h com destino a " + horarios.get(i).getLinha().getEstacoes().get(horarios.get(i).getLinha().getEstacoes().size() - 1).getNome() + " e com chegada prevista às " + horarios.get(i).getHoraChegada() + "h para fazer a linha " + horarios.get(i).getLinha().getNumero() + " no sentido de " + horarios.get(i).getSentido());
             } else {
                 System.out.println("Comboio " + getNumero() + " vai partir da estação " + getEstacaoAtual().getNome() + " às " + horarios.get(i).getHoraPartida() + "h com destino a " + horarios.get(i).getLinha().getEstacoes().get(0).getNome() + " e com chegada prevista às " + horarios.get(i).getHoraChegada() + "h para fazer a linha " + horarios.get(i).getLinha().getNumero() + " no sentido de " + horarios.get(i).getSentido());
@@ -200,7 +197,7 @@ public class Comboio extends Thread {
             // Código para percorrer as estações da linha
             for (Estacao estacao : line.getEstacoes()) {
 
-                 // Verifica se a estação atual está sobrelotada de comboios
+                // Verifica se a estação atual está sobrelotada de comboios
                 if (currentStation.isFull()) {
                     //System.out.println("Conflito na estação " + currentStation.getNumero() + ": estação sobrelotada de comboios");
                 }
@@ -216,16 +213,8 @@ public class Comboio extends Thread {
                 try {
                     this.openDoors();
 
-                    //verifica se há passageiros no comboio que querem sair na estação atual
                     for (Passageiro passageiro : passageiros) {
-                        // o passgeiro só entre se a linha que tem no seu bilhete for igual à linha que o comboio está a precorrer.
-                        if (passageiro.getBilhete().getEstacaoSaida().getNumero() == currentStation.getNumero() && passageiro.getBilhete().getLinha().getNumero() == line.getNumero() && passageiro.isEstaNoComboio()) {
-                            this.desembarcarPassageiro(passageiro);
-                        }
-                    }
-
-                    for (Passageiro passageiro : passageiros) {
-                        if (passageiro.getEstacaoEntrada().getNumero() == currentStation.getNumero() && passageiro.getComboio()==null && passageiro.getBilhete().getLinha() == this.getHorarioAtual().getLinha() && !passageiro.isTentouEntrar() && !passageiro.isEstaNoComboio() && !passageiro.isSaiuDoComboio()) {
+                        if (passageiro.getEstacaoEntrada().getNumero() == currentStation.getNumero() && passageiro.getComboio() == null && passageiro.getBilhete().getLinha() == this.getHorarioAtual().getLinha() && !passageiro.isTentouEntrar() && !passageiro.isEstaNoComboio() && !passageiro.isSaiuDoComboio()) {
                             this.embarcarPassageiro(passageiro, this);
                         }
 //                        if (passageiro.getBilhete().getEstacaoEntra().getNumero() == currentStation.getNumero() && passageiro.getBilhete().getLinha().getNumero() == line.getNumero() && !passageiro.isTentouEntrar()) {
@@ -246,9 +235,13 @@ public class Comboio extends Thread {
 
                 // Fecha as portas do comboio por 2 segundos
                 try {
-//                    for (Passageiro passageiro : passageiros) {
-//                        this.desembarcarPassageiro(passageiro);
-//                    }
+                    //verifica se há passageiros no comboio que querem sair na estação atual
+                    for (Passageiro passageiro : passageiros) {
+                        // o passgeiro só entre se a linha que tem no seu bilhete for igual à linha que o comboio está a precorrer.
+                        if (passageiro.getBilhete().getEstacaoSaida().getNumero() == currentStation.getNumero() && passageiro.getBilhete().getLinha().getNumero() == line.getNumero() && passageiro.isEstaNoComboio()) {
+                            this.desembarcarPassageiro(passageiro);
+                        }
+                    }
                     this.closeDoors();
                     Thread.sleep(2000);
                 } catch (InterruptedException e) {

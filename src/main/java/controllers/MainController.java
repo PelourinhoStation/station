@@ -16,15 +16,19 @@ public class MainController {
     @FXML
     private TextField txt1;
     @FXML
-    private Button btnEstacoes, btnComboios, btnLinhas, btnHorarios, btnLinhasEstacoes, btnLinhasHorarios;
+    private Button btnEstacoes, btnComboios, btnLinhas, btnHorarios, btnLinhasEstacoes, btnLinhasHorarios, btnIniciar;
+
+    public void initialize() {
+        btnIniciar.requestFocus();
+    }
 
     @FXML
-    protected void onBtnIniciarClick(){
-        Main.iniciaComboios(Main.comboiosParaPartir);
-//        for (int i =0;i<Main.comboiosParaPartir.size();i++){
-//            Comboio comboio = Main.comboiosParaPartir.get(i);
-//            comboio.start();
-//        }
+    protected void onBtnIniciarClick() throws InterruptedException {
+        if (Main.comboiosParaPartir.size()==0){
+            System.out.println("Não existem comboios para partir, é necessário ir à gestão de comboios e selecionar os comboios que pretende iniciar.");
+        } else {
+            Main.iniciaComboios(Main.comboiosParaPartir);
+        }
     }
 
     @FXML
@@ -32,8 +36,9 @@ public class MainController {
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("estacoes-view.fxml"));
         Parent root1 = fxmlLoader.load();
         Stage stage = new Stage();
-        stage.setTitle("Estações");
+        stage.setTitle("ESTAÇÕES");
         stage.setScene(new Scene(root1));
+        stage.resizableProperty().setValue(Boolean.FALSE);
         stage.show();
     }
 
@@ -42,8 +47,9 @@ public class MainController {
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("comboios-view.fxml"));
         Parent root2 = fxmlLoader.load();
         Stage stage = new Stage();
-        stage.setTitle("Comboios");
+        stage.setTitle("COMBOIOS");
         stage.setScene(new Scene(root2));
+        stage.resizableProperty().setValue(Boolean.FALSE);
         stage.show();
     }
 
@@ -52,8 +58,9 @@ public class MainController {
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("linhas-view.fxml"));
         Parent root3 = fxmlLoader.load();
         Stage stage = new Stage();
-        stage.setTitle("Linhas");
+        stage.setTitle("LINHAS");
         stage.setScene(new Scene(root3));
+        stage.resizableProperty().setValue(Boolean.FALSE);
         stage.show();
     }
 
@@ -62,8 +69,9 @@ public class MainController {
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("horarios-view.fxml"));
         Parent root3 = fxmlLoader.load();
         Stage stage = new Stage();
-        stage.setTitle("Linhas");
+        stage.setTitle("HORÁRIOS");
         stage.setScene(new Scene(root3));
+        stage.resizableProperty().setValue(Boolean.FALSE);
         stage.show();
     }
 
@@ -72,8 +80,9 @@ public class MainController {
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("bilhetes-view.fxml"));
         Parent root3 = fxmlLoader.load();
         Stage stage = new Stage();
-        stage.setTitle("Linhas");
+        stage.setTitle("BILHETES");
         stage.setScene(new Scene(root3));
+        stage.resizableProperty().setValue(Boolean.FALSE);
         stage.show();
     }
 
@@ -82,8 +91,9 @@ public class MainController {
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("passageiros-view.fxml"));
         Parent root3 = fxmlLoader.load();
         Stage stage = new Stage();
-        stage.setTitle("Linhas");
+        stage.setTitle("PASSAGEIROS");
         stage.setScene(new Scene(root3));
+        stage.resizableProperty().setValue(Boolean.FALSE);
         stage.show();
     }
 
@@ -92,8 +102,9 @@ public class MainController {
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("linhasEstacoes-view.fxml"));
         Parent root3 = fxmlLoader.load();
         Stage stage = new Stage();
-        stage.setTitle("Linhas - Estações");
+        stage.setTitle("LINHAS - ESTAÇÕES");
         stage.setScene(new Scene(root3));
+        stage.resizableProperty().setValue(Boolean.FALSE);
         stage.show();
     }
     @FXML
@@ -101,8 +112,9 @@ public class MainController {
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("horariosLinhas-view.fxml"));
         Parent root3 = fxmlLoader.load();
         Stage stage = new Stage();
-        stage.setTitle("Horários - Linhas");
+        stage.setTitle("HORÁRIOS - LINHAS");
         stage.setScene(new Scene(root3));
+        stage.resizableProperty().setValue(Boolean.FALSE);
         stage.show();
     }
 }

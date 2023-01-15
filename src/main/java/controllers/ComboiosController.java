@@ -96,6 +96,7 @@ public class ComboiosController {
 
     public void onUpdateClick() throws IOException, ClassNotFoundException {
         try {
+            PainelControlo.updateComboios(Integer.parseInt(txtNumero.getText()), Integer.parseInt(txtLotacao.getText()));
             getDataToTableView();
         } catch (Exception e) {
             lblAlerta.setText("Erro ao atualizar os dados!");
@@ -112,6 +113,7 @@ public class ComboiosController {
     }
 
     public void onPartirClick() {
+        System.out.println("Comboio " + selectedItem.getNumero() + " está selecionado para partir");
         Main.comboiosParaPartir.add(selectedItem);
 //        for (Comboio comboio : Main.comboiosParaPartir) {
 //            System.out.println(comboio.getNumero());

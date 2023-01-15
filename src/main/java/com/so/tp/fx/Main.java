@@ -3,6 +3,7 @@ package com.so.tp.fx;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -13,9 +14,17 @@ import java.sql.*;
 public class Main extends Application {
 
 
-    public static List<Estacao> estacoesLinhaPorto1 = new LinkedList<>();
-    public static List<Estacao> estacoesLinhaPorto2 = new LinkedList<>();
-    public static List<Estacao> estacoesLinhaPorto3 = new LinkedList<>();
+    public static List<Estacao> estacoes1 = new LinkedList<>();
+    public static List<Estacao> estacoes2 = new LinkedList<>();
+    public static List<Estacao> estacoes3 = new LinkedList<>();
+    public static List<Estacao> estacoes4 = new LinkedList<>();
+    public static List<Estacao> estacoes5 = new LinkedList<>();
+    public static List<Estacao> estacoes6 = new LinkedList<>();
+    public static List<Estacao> estacoes7 = new LinkedList<>();
+    public static List<Estacao> estacoes8 = new LinkedList<>();
+    public static List<Estacao> estacoes9 = new LinkedList<>();
+    public static List<Estacao> estacoes10 = new LinkedList<>();
+
     public static List<Horario> horariosLinhaPorto1 = new LinkedList<>();
     public static List<Horario> horariosLinhaPorto2 = new LinkedList<>();
     public static List<Horario> horariosLinhaPorto3 = new LinkedList<>();
@@ -34,6 +43,7 @@ public class Main extends Application {
         Scene scene = new Scene(fxmlLoader.load());
         stage.setTitle("SISTEMA DE GESTÃO FERROVIÁRIA");
         stage.setScene(scene);
+        stage.resizableProperty().setValue(Boolean.FALSE);
         stage.show();
     }
 
@@ -51,11 +61,11 @@ public class Main extends Application {
         launch();
     }
 
-    public static void teste(Map<Integer, Comboio> comboios ){
+    public static void teste(Map<Integer, Comboio> comboios) {
 
     }
 
-    public static void iniciaComboios(List<Comboio> comboios) {
+    public static void iniciaComboios(List<Comboio> comboios) throws InterruptedException {
 
         //instancia do objeto random para gerar um valor aleatório
         Random random = new Random();
@@ -110,8 +120,8 @@ public class Main extends Application {
         //metodo para percorrer os comboios dados como prontos para partir
         for (Comboio comboio : comboiosParaPartir) {
             comboio.start(); //inicia os comboios que estão na lista
+            //comboio.join(); //espera que o comboio termine a sua execução
         }
-
     }
 
 //    public static void geradorDeDados() throws ClassNotFoundException {

@@ -99,6 +99,19 @@ public class BilhetesController {
 
             cbEntrada.getSelectionModel().selectFirst();
             cbSaida.getSelectionModel().selectLast();
+            cbSentido.getSelectionModel().selectFirst();
+        }
+    }
+
+    public void onSentidoChanged(){
+        if (cbSentido.getValue()!=null){
+            if (cbSentido.getValue().toString().equals("Ida")){
+                cbEntrada.getSelectionModel().selectFirst();
+                cbSaida.getSelectionModel().selectLast();
+            }else{
+                cbEntrada.getSelectionModel().selectLast();
+                cbSaida.getSelectionModel().selectFirst();
+            }
         }
     }
 
@@ -106,6 +119,7 @@ public class BilhetesController {
         cbLinha.getItems().clear();
         cbEntrada.getItems().clear();
         cbSaida.getItems().clear();
+        cbSentido.getItems().clear();
 
         for (int i = 0; i < PainelControlo.linhas.size(); i++) {
             cbLinha.getItems().add(PainelControlo.linhas.get(i).getNumero() + " - " + PainelControlo.linhas.get(i).getNome());
@@ -156,6 +170,9 @@ public class BilhetesController {
         cbLinha.getSelectionModel().clearSelection();
         cbEntrada.getSelectionModel().clearSelection();
         cbSaida.getSelectionModel().clearSelection();
+        cbSentido.getSelectionModel().clearSelection();
+        initializeComboBox();
+        cbLinha.requestFocus();
     }
 
     public void onSaveClick() throws IOException, ClassNotFoundException {

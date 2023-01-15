@@ -14,6 +14,7 @@ public class horariosLinhasController {
     @FXML
     private TableView<Horario.HorariosLinhas> tblLinhasHorarios;
     private TableColumn<Horario.HorariosLinhas, Integer> colNumero;
+    private TableColumn<Horario.HorariosLinhas, Integer> colNumeroHorario;
     private TableColumn<Horario.HorariosLinhas, String> colHoraPartida;
     private TableColumn<Horario.HorariosLinhas, String> colHoraChegada;
     private TableColumn<Horario.HorariosLinhas, String> colNomeLinha;
@@ -40,6 +41,8 @@ public class horariosLinhasController {
         colNumero.setCellValueFactory(new PropertyValueFactory<>("numero"));
         colNomeLinha = new TableColumn<>("Nome Linha");
         colNomeLinha.setCellValueFactory(new PropertyValueFactory<>("nomeLinha"));
+        colNumeroHorario = new TableColumn<>("Número Horario");
+        colNumeroHorario.setCellValueFactory(new PropertyValueFactory<>("numHorario"));
         colHoraPartida = new TableColumn<>("Hora Partida");
         colHoraPartida.setCellValueFactory(new PropertyValueFactory<>("horaPartida"));
         colHoraChegada = new TableColumn<>("Hora Chegada");
@@ -54,7 +57,7 @@ public class horariosLinhasController {
         selectionModel.setSelectionMode(
                 SelectionMode.SINGLE);
 
-        tblLinhasHorarios.getColumns().addAll(colNumero, colNomeLinha, colHoraPartida, colHoraChegada, colSentido);
+        tblLinhasHorarios.getColumns().addAll(colNumero, colNomeLinha, colNumeroHorario, colHoraPartida, colHoraChegada, colSentido);
 
         getDataToTableView();
     }
